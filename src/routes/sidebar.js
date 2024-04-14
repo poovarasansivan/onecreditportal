@@ -7,67 +7,60 @@
  */
 const routes = [
   {
-    path: '/app/dashboard', // the url
-    icon: 'HomeIcon', // the component being exported from icons/index.js
-    name: 'Dashboard', // name that appear in Sidebar
+    path: "/app/dashboard", // the url
+    icon: "HomeIcon", // the component being exported from icons/index.js
+    name: "Dashboard", // name that appear in Sidebar
   },
   {
-    path: '/app/forms',
-    icon: 'FormsIcon',
-    name: 'Forms',
+    path: "/app/studentmasters",
+    icon: "TablesIcon",
+    name: "StudentMaster",
   },
   {
-    path: '/app/cards',
-    icon: 'CardsIcon',
-    name: 'Cards',
+    path: "/app/assignedcourses",
+    icon: "SiCoursera",
+    name: "Assigned Courses",
   },
   {
-    path: '/app/charts',
-    icon: 'ChartsIcon',
-    name: 'Charts',
+    path: "/app/mycourse",
+    icon: "SiCoursera",
+    name: "MyCourse",
   },
   {
-    path: '/app/buttons',
-    icon: 'ButtonsIcon',
-    name: 'Buttons',
+    path: "/app/courseregistration",
+    icon: "FormsIcon",
+    name: "CourseRegistration",
   },
   {
-    path: '/app/modals',
-    icon: 'ModalsIcon',
-    name: 'Modals',
+    path: "/app/faculty",
+    icon: "FaChalkboardTeacher",
+    name: "Faculty Mapping",
   },
   {
-    path: '/app/tables',
-    icon: 'TablesIcon',
-    name: 'Tables',
+    path: "/app/curriculum",
+    icon: "FormsIcon",
+    name: "Curriculum",
   },
-  {
-    icon: 'PagesIcon',
-    name: 'Pages',
-    routes: [
-      // submenu
-      {
-        path: '/login',
-        name: 'Login',
-      },
-      {
-        path: '/create-account',
-        name: 'Create account',
-      },
-      {
-        path: '/forgot-password',
-        name: 'Forgot password',
-      },
-      {
-        path: '/app/404',
-        name: '404',
-      },
-      {
-        path: '/app/blank',
-        name: 'Blank',
-      },
-    ],
-  },
-]
+  // {
+  //   path: '/app/modals',
+  //   icon: 'TablesIcon',
+  //   name: 'Modals',
+  // },
+  // {
+  //   path: '/app/studentmasters',
+  //   icon: 'TablesIcon',
+  //   name: 'StudentMaster',
+  // },
+  // {
+  //   path: "/app/studentmaster", // the url
+  //   icon: "HomeIcon", // the component being exported from icons/index.js
+  //   name: "Dashboard", // name that appear in Sidebar
+  // },
+  // {
+  //   path: "/app/cards",
+  //   icon: "CardsIcon",
+  //   name: "Cards",
+  // },
+];
 
-export default routes
+export default routes;

@@ -7,23 +7,106 @@ import {
   TableRow,
   TableFooter,
   TableContainer,
-  Badge,
   Button,
   Pagination,
   Input,
+  Label,
 } from "@windmill/react-ui";
 import { FaDownload } from "react-icons/fa6";
-import { EditIcon, TrashIcon } from "../icons";
+import { EditIcon } from "../icons";
 import PageTitle from "../components/Typography/PageTitle";
-import response from "../utils/demo/tableData";
 import * as XLSX from "xlsx";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "@windmill/react-ui";
-import { Label } from "@windmill/react-ui";
 
-// Make a copy of the data for the second table
-const response2 = response.concat([]);
+const response2 = [
+  {
+    rollno: "7376211CS239",
+    name: "Poovarasan S",
+    department: "CSE",
+    CoreSubject1: "Maths",
+    CoreSubject2: "Physics",
+    CoreSubject3: "Chemistry",
+    CoreSubject4: "DSA",
+    ElectiveCourse1: "Java",
+    ElectiveCourse2: "PHP",
+    OpenElective: "Python",
+    AddonCourse: "Digital Marketing",
+    HonoursCourse1: "Not Applicable",
+    HonoursCourse2: "Not Applicable",
+    status: "success",
+    activestatus: "Active",
+  },
+  {
+    rollno: "7376211CS240",
+    name: "John Doe",
+    department: "ECE",
+    CoreSubject1: "Electronics",
+    CoreSubject2: "Signals and Systems",
+    CoreSubject3: "Digital Signal Processing",
+    CoreSubject4: "Circuit Theory",
+    ElectiveCourse1: "Embedded Systems",
+    ElectiveCourse2: "Communication Systems",
+    OpenElective: "Data Structures",
+    AddonCourse: "Internet of Things",
+    HonoursCourse1: "Not Applicable",
+    HonoursCourse2: "Not Applicable",
+    status: "success",
+    activestatus: "Active",
+  },
+  {
+    rollno: "7376211CS241",
+    name: "Jane Smith",
+    department: "Mechanical",
+    CoreSubject1: "Thermodynamics",
+    CoreSubject2: "Fluid Mechanics",
+    CoreSubject3: "Strength of Materials",
+    CoreSubject4: "Manufacturing Processes",
+    ElectiveCourse1: "Automobile Engineering",
+    ElectiveCourse2: "Robotics",
+    OpenElective: "Finite Element Analysis",
+    AddonCourse: "Supply Chain Management",
+    HonoursCourse1: "Not Applicable",
+    HonoursCourse2: "Not Applicable",
+    status: "success",
+    activestatus: "Active",
+  },
+  {
+    rollno: "7376211CS242",
+    name: "Alice Johnson",
+    department: "EEE",
+    CoreSubject1: "Electrical Machines",
+    CoreSubject2: "Power Systems",
+    CoreSubject3: "Control Systems",
+    CoreSubject4: "Electrical Measurements",
+    ElectiveCourse1: "Renewable Energy",
+    ElectiveCourse2: "Power Electronics",
+    OpenElective: "Machine Learning",
+    AddonCourse: "Energy Management",
+    HonoursCourse1: "Not Applicable",
+    HonoursCourse2: "Not Applicable",
+    status: "success",
+    activestatus: "Active",
+  },
+  {
+    rollno: "7376211CS243",
+    name: "David Brown",
+    department: "Civil",
+    CoreSubject1: "Structural Analysis",
+    CoreSubject2: "Geotechnical Engineering",
+    CoreSubject3: "Fluid Mechanics",
+    CoreSubject4: "Transportation Engineering",
+    ElectiveCourse1: "Construction Management",
+    ElectiveCourse2: "Environmental Engineering",
+    OpenElective: "Remote Sensing and GIS",
+    AddonCourse: "Project Management",
+    HonoursCourse1: "Not Applicable",
+    HonoursCourse2: "Not Applicable",
+    status: "success",
+    activestatus: "Active",
+  },
+];
 
-function Tables() {
+function Assignedcourse() {
   const [dataTable2, setDataTable2] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,7 +116,7 @@ function Tables() {
   const [editedData, setEditedData] = useState({}); // State to track edited data
 
   const resultsPerPage = 8;
-  const totalResults = response.length;
+  const totalResults = response2.length;
 
   const [pageTable2, setPageTable2] = useState(1);
   useEffect(() => {
@@ -53,9 +136,7 @@ function Tables() {
   function closeEditModal() {
     setIsEditModalOpen(false);
   }
-
-  function openDeleteModal(user) {
-    setRowDataToEdit(user); // Set the data of the row being deleted
+  function openDeleteModal() {
     setIsDeleteModalOpen(true);
   }
 
@@ -63,23 +144,58 @@ function Tables() {
     setIsDeleteModalOpen(false);
   }
 
-  useEffect(() => {
-    setFilteredData(
-      dataTable2.filter(
-        (user) =>
-          (user.rollno &&
-            user.rollno.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.name &&
-            user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.email &&
-            user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.department &&
-            user.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.batch &&
-            user.batch.toLowerCase().includes(searchTerm.toLowerCase()))
-      )
-    );
-  }, [searchTerm, dataTable2]);
+  //   useEffect(() => {
+  //     setFilteredData(
+  //       dataTable2.filter(
+  //         (user.rollno &&
+  //             user.rollno.toLowerCase().includes(searchTerm.toLowerCase())) ||
+  //           (user.name &&
+  //             user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+  //           (user.department &&
+  //             user.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
+  //           (user.CoreSubject1 &&
+  //             user.CoreSubject1.toLowerCase().includes(
+  //               searchTerm.toLowerCase()
+  //             )) ||
+  //           (user.CoreSubject2 &&
+  //             user.CoreSubject2.toLowerCase().includes(
+  //               searchTerm.toLowerCase()
+  //             )) ||
+  //           (user.CoreSubject3 &&
+  //             user.CoreSubject3.toLowerCase().includes(
+  //               searchTerm.toLowerCase()
+  //             )) ||
+  //           (user.CoreSubject4 &&
+  //             user.CoreSubject4.toLowerCase().includes(
+  //               searchTerm.toLowerCase()
+  //             )) ||
+  //           (user.ElectiveCourse1 &&
+  //             user.ElectiveCourse1.toLowerCase().includes(
+  //               searchTerm.toLowerCase()
+  //             )) ||
+  //           (user.ElectiveCourse2 &&
+  //             user.ElectiveCourse2.toLowerCase().includes(
+  //               searchTerm.toLowerCase()
+  //             )) ||
+  //           (user.OpenElective &&
+  //             user.OpenElective.toLowerCase().includes(
+  //               searchTerm.toLowerCase()
+  //             )) ||
+  //           (user.AddonCourse &&
+  //             user.AddonCourse.toLowerCase().includes(
+  //               searchTerm.toLowerCase()
+  //             )) ||
+  //           (user.HonoursCourse1 &&
+  //             user.HonoursCourse1.toLowerCase().includes(
+  //               searchTerm.toLowerCase()
+  //             )) ||
+  //           (user.HonoursCourse2 &&
+  //             user.HonoursCourse2.toLowerCase().includes(
+  //               searchTerm.toLowerCase()
+  //             ))
+  //         )
+  //     );
+  //   }, [searchTerm, dataTable2]);
 
   function onPageChangeTable2(p) {
     setPageTable2(p);
@@ -131,12 +247,48 @@ function Tables() {
             user.rollno.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.name &&
             user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.email &&
-            user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.department &&
             user.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.batch &&
-            user.batch.toLowerCase().includes(searchTerm.toLowerCase()))
+          (user.CoreSubject1 &&
+            user.CoreSubject1.toLowerCase().includes(
+              searchTerm.toLowerCase()
+            )) ||
+          (user.CoreSubject2 &&
+            user.CoreSubject2.toLowerCase().includes(
+              searchTerm.toLowerCase()
+            )) ||
+          (user.CoreSubject3 &&
+            user.CoreSubject3.toLowerCase().includes(
+              searchTerm.toLowerCase()
+            )) ||
+          (user.CoreSubject4 &&
+            user.CoreSubject4.toLowerCase().includes(
+              searchTerm.toLowerCase()
+            )) ||
+          (user.ElectiveCourse1 &&
+            user.ElectiveCourse1.toLowerCase().includes(
+              searchTerm.toLowerCase()
+            )) ||
+          (user.ElectiveCourse2 &&
+            user.ElectiveCourse2.toLowerCase().includes(
+              searchTerm.toLowerCase()
+            )) ||
+          (user.OpenElective &&
+            user.OpenElective.toLowerCase().includes(
+              searchTerm.toLowerCase()
+            )) ||
+          (user.AddonCourse &&
+            user.AddonCourse.toLowerCase().includes(
+              searchTerm.toLowerCase()
+            )) ||
+          (user.HonoursCourse1 &&
+            user.HonoursCourse1.toLowerCase().includes(
+              searchTerm.toLowerCase()
+            )) ||
+          (user.HonoursCourse2 &&
+            user.HonoursCourse2.toLowerCase().includes(
+              searchTerm.toLowerCase()
+            ))
       )
     );
   }, [searchTerm, dataTable2]);
@@ -181,29 +333,37 @@ function Tables() {
     // Logic to export data as a CSV file
     // This depends on the format of your data and how you want to export it
     // Example logic:
-    let csvContent = "Roll no,Name,Email,Department,Status\n";
+    let csvContent =
+      "Roll no,Name,Department,CoreSubject1, CourseSubject2,CoreSubject3,CoreSubject4,ElectiveCourse1,ElectiveCourse2,OpenElective,AddonCourse,HonoursCourse1,HonoursCourse2 \n";
     dataTable2.forEach((user) => {
       // Check if user object has all required properties
       if (
         user.rollno &&
         user.name &&
-        user.email &&
         user.department &&
-        user.batch
+        user.CoreSubject1 &&
+        user.CoreSubject2 &&
+        user.CoreSubject3 &&
+        user.CoreSubject4 &&
+        user.ElectiveCourse1 &&
+        user.ElectiveCourse2 &&
+        user.OpenElective &&
+        user.AddonCourse &&
+        user.HonoursCourse1 &&
+        user.HonoursCourse2
       ) {
-        csvContent += `${user.rollno},${user.name},${user.email},${user.department},${user.batch},${user.activestatus}\n`;
+        csvContent += `${user.rollno},${user.name},${user.department},${user.CoreSubject1},${user.CoreSubject2},${user.CoreSubject3},${user.CoreSubject4},${user.ElectiveCourse1},${user.ElectiveCourse2},${user.OpenElective},${user.AddonCourse},${user.HonoursCourse1},${user.HonoursCourse2}\n`;
       }
     });
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "student_details.csv";
+    a.download = "assigned_course.csv";
     a.click();
     URL.revokeObjectURL(url);
   }
   console.log(dataTable2);
-
   function handleInputChange(event) {
     const { name, value } = event.target;
     setEditedData((prevData) => ({
@@ -211,7 +371,6 @@ function Tables() {
       [name]: value,
     }));
   }
-
   function handleUpdate() {
     // Find the index of the row to be updated
     const rowIndex = dataTable2.findIndex(
@@ -226,19 +385,9 @@ function Tables() {
       closeEditModal(); // Close the modal after updating
     }
   }
-
-  function handleDelete() {
-    // Filter out the row to be deleted
-    const updatedDataTable = dataTable2.filter(
-      (row) => row.rollno !== rowDataToEdit.rollno
-    );
-    setDataTable2(updatedDataTable);
-    closeDeleteModal(); // Close the modal after deletion
-  }
-
   return (
     <>
-      <PageTitle>Student Master</PageTitle>
+      <PageTitle>Assigned Course</PageTitle>
 
       <TableContainer className="mb-8">
         <div className="m-4 flex justify-between items-center">
@@ -275,11 +424,18 @@ function Tables() {
               <TableCell>S no</TableCell>
               <TableCell>Roll no</TableCell>
               <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
               <TableCell>Department</TableCell>
-              <TableCell>Batch</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell>CoreSubject1</TableCell>
+              <TableCell>CoreSubject2</TableCell>
+              <TableCell>CoreSubject3</TableCell>
+              <TableCell>CoreSubject4</TableCell>
+              <TableCell>ElectiveCourse1</TableCell>
+              <TableCell>ElectiveCourse2</TableCell>
+              <TableCell>OpenElective</TableCell>
+              <TableCell>AddonCourse</TableCell>
+              <TableCell>HonoursCourse1</TableCell>
+              <TableCell>HonoursCourse2</TableCell>
+              <TableCell>Action</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
@@ -303,16 +459,37 @@ function Tables() {
                   <span className="text-sm">{user.name}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{user.email}</span>
-                </TableCell>
-                <TableCell>
                   <span className="text-sm">{user.department}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{user.batch}</span>
+                  <span className="text-sm">{user.CoreSubject1}</span>
                 </TableCell>
                 <TableCell>
-                  <Badge type={user.status}>{user.activestatus}</Badge>
+                  <span className="text-sm">{user.CoreSubject2}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.CoreSubject3}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.CoreSubject4}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.ElectiveCourse1}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.ElectiveCourse2}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.OpenElective}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.AddonCourse}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.HonoursCourse1}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.HonoursCourse2}</span>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-4">
@@ -320,18 +497,18 @@ function Tables() {
                       layout="link"
                       size="icon"
                       aria-label="Edit"
-                      onClick={() => openEditModal(user)} // Pass the row data to the edit modal
+                      onClick={() => openEditModal(user)}
                     >
                       <EditIcon className="w-5 h-5" aria-hidden="true" />
                     </Button>
-                    <Button
+                    {/* <Button
                       layout="link"
                       size="icon"
                       aria-label="Delete"
-                      onClick={() => openDeleteModal(user)} // Pass the row data to the delete modal
+                      onClick={openDeleteModal}
                     >
                       <TrashIcon className="w-5 h-5" aria-hidden="true" />
-                    </Button>
+                    </Button> */}
                   </div>
                 </TableCell>
               </TableRow>
@@ -349,48 +526,72 @@ function Tables() {
       </TableContainer>
       <div></div>
       <Modal isOpen={isEditModalOpen} onClose={closeEditModal}>
-        <ModalHeader>Student Details</ModalHeader>
-        <ModalBody>
-          {/* Display the row data in the modal */}
+        <ModalHeader>Assigned Course Details</ModalHeader>
+        <ModalBody className="overflow-y-auto max-h-22">
           {rowDataToEdit && (
             <>
-              <p>{rowDataToEdit.rollno}</p>
-              <p>{rowDataToEdit.name}</p>
-              <p>{rowDataToEdit.email}</p>
-              <p>{rowDataToEdit.department}</p>
-              <p>{rowDataToEdit.batch}</p>
-              <Label className="mt-4">
-                <span>Name</span>
-                <Input
-                  className="mt-1"
-                  name="name"
-                  placeholder="Poovarasan"
-                  value={editedData.name || ""}
-                  onChange={handleInputChange}
-                />
-              </Label>
-              <Label className="mt-4">
-                <span>Email</span>
-                <Input
-                  className="mt-1"
-                  name="email"
-                  placeholder="poovarasan@bitsathy"
-                  value={editedData.email || ""}
-                  onChange={handleInputChange}
-                />
-              </Label>
-              <Label className="mt-4">
-                <span>Department</span>
-                <Input
-                  className="mt-1"
-                  name="department"
-                  placeholder="CSE"
-                  value={editedData.department || ""}
-                  onChange={handleInputChange}
-                />
-              </Label>
+              <p>Student Rollno : {rowDataToEdit.rollno}</p>
 
-              {/* Add input fields for editing */}
+              <Label className="mt-4">
+                <span>ElectiveCourse1</span>
+                <Input
+                  className="mt-1"
+                  name="ElectiveCourse1"
+                  placeholder="XML Web Services"
+                  value={editedData.ElectiveCourse1 || ""}
+                  onChange={handleInputChange}
+                />
+              </Label>
+              <Label className="mt-4">
+                <span>ElectiveCourse2</span>
+                <Input
+                  className="mt-1"
+                  name="ElectiveCourse2"
+                  placeholder="Modern Cryptography"
+                  value={editedData.ElectiveCourse2 || ""}
+                  onChange={handleInputChange}
+                />
+              </Label>
+              <Label className="mt-4">
+                <span>OpenElective</span>
+                <Input
+                  className="mt-1"
+                  name="OpenElective"
+                  placeholder="Java Fundamentals"
+                  value={editedData.OpenElective || ""}
+                  onChange={handleInputChange}
+                />
+              </Label>
+              <Label className="mt-4">
+                <span>AddonCourse</span>
+                <Input
+                  className="mt-1"
+                  name="AddonCourse"
+                  placeholder="Digital Marketing"
+                  value={editedData.AddonCourse || ""}
+                  onChange={handleInputChange}
+                />
+              </Label>
+              <Label className="mt-4">
+                <span>HonoursCourse1</span>
+                <Input
+                  className="mt-1"
+                  name="HonoursCourse1"
+                  placeholder="Big Data Analytics"
+                  value={editedData.HonoursCourse1 || ""}
+                  onChange={handleInputChange}
+                />
+              </Label>
+              <Label className="mt-4">
+                <span>HonoursCourse2</span>
+                <Input
+                  className="mt-1"
+                  name="HonoursCourse2"
+                  placeholder="Cloud Computing"
+                  value={editedData.HonoursCourse2 || ""}
+                  onChange={handleInputChange}
+                />
+              </Label>
             </>
           )}
         </ModalBody>
@@ -430,7 +631,7 @@ function Tables() {
             </Button>
           </div>
           <div className="hidden sm:block">
-            <Button onClick={handleDelete}>Delete</Button>
+            <Button>Delete</Button>
           </div>
           <div className="block w-full sm:hidden">
             <Button
@@ -443,8 +644,8 @@ function Tables() {
             </Button>
           </div>
           <div className="block w-full sm:hidden">
-            <Button block size="large" onClick={handleDelete}>
-              Delete
+            <Button block size="large">
+              Accept
             </Button>
           </div>
         </ModalFooter>
@@ -453,4 +654,4 @@ function Tables() {
   );
 }
 
-export default Tables;
+export default Assignedcourse;

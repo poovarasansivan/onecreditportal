@@ -14,6 +14,7 @@ import {
 } from "@windmill/react-ui";
 import { FaDownload } from "react-icons/fa6";
 import { EditIcon, TrashIcon } from "../icons";
+import { IoIosAddCircleOutline } from "react-icons/io";
 import PageTitle from "../components/Typography/PageTitle";
 import response from "../utils/demo/tableData";
 import * as XLSX from "xlsx";
@@ -21,17 +22,65 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from "@windmill/react-ui";
 import { Label } from "@windmill/react-ui";
 
 // Make a copy of the data for the second table
-const response2 = response.concat([]);
+const response2 = [
+  {
+    id: "18CS2013",
+    name: "Sathish",
+    department: "CSE",
+    level: "AP Level 2",
+    email: "sathish@bitsathy.ac.in",
+    assignedcourse: "DBMS",
+  },
+  {
+    id: "18CS1013",
+    name: "Karthick",
+    department: "CSE",
+    level: "AP Level 1",
+    email: "karthick@bitsathy.ac.in",
+    assignedcourse: "Computer Architecture",
+  },
+  {
+    id: "20CS1013",
+    name: "Karthiga",
+    department: "CSE",
+    level: "AP Level 3",
+    email: "karthiga@bitsathy.ac.in",
+    assignedcourse: "DSA",
+  },
+  {
+    id: "20CS1013",
+    name: "Karthiga",
+    department: "CSE",
+    level: "AP Level 3",
+    email: "karthiga@bitsathy.ac.in",
+    assignedcourse: "DSA",
+  },
+  {
+    id: "20CS20313",
+    name: "Rajesh",
+    department: "IT",
+    level: "AP Level 1",
+    email: "rajesh@bitsathy.ac.in",
+    assignedcourse: "DSD",
+  },
+];
 
 function Tables() {
   const [dataTable2, setDataTable2] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddFacultyModalOpen, setAddFacultyModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [rowDataToEdit, setRowDataToEdit] = useState(null); // State to store data of the row being edited
   const [editedData, setEditedData] = useState({}); // State to track edited data
-
+  const [formData, setFormData] = useState({
+    facultyId: "",
+    name: "",
+    email: "",
+    levelOfProficiency: "",
+    assignedCourse: "",
+  });
   const resultsPerPage = 8;
   const totalResults = response.length;
 
@@ -49,7 +98,12 @@ function Tables() {
     setRowDataToEdit(rowData); // Set the data of the row being edited
     setIsEditModalOpen(true);
   }
-
+  function addFacultyModalOpen() {
+    setAddFacultyModalOpen(true);
+  }
+  function closeAddFacultyModal() {
+    setAddFacultyModalOpen(false);
+  }
   function closeEditModal() {
     setIsEditModalOpen(false);
   }
@@ -62,21 +116,28 @@ function Tables() {
   function closeDeleteModal() {
     setIsDeleteModalOpen(false);
   }
-
+  const handleformsubmit = () => {
+    console.log("Form Data:", formData);
+    closeAddFacultyModal();
+  };
   useEffect(() => {
     setFilteredData(
       dataTable2.filter(
         (user) =>
-          (user.rollno &&
-            user.rollno.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.id &&
+            user.id.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.name &&
             user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.email &&
             user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.department &&
             user.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.batch &&
-            user.batch.toLowerCase().includes(searchTerm.toLowerCase()))
+          (user.level &&
+            user.level.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.assignedcourse &&
+            user.assignedcourse
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()))
       )
     );
   }, [searchTerm, dataTable2]);
@@ -103,7 +164,6 @@ function Tables() {
       if (fileExtension === "xlsx" || fileExtension === "xls") {
         try {
           const importedData = parseExcelData(event.target.result);
-          console.log("Imported Excel data:", importedData);
           setDataTable2(importedData);
         } catch (error) {
           console.error("Error parsing Excel data:", error);
@@ -111,7 +171,6 @@ function Tables() {
       } else if (fileExtension === "csv") {
         try {
           const importedData = parseCSVData(event.target.result);
-          console.log("Imported CSV data:", importedData);
           setDataTable2(importedData);
         } catch (error) {
           console.error("Error parsing CSV data:", error);
@@ -127,20 +186,23 @@ function Tables() {
     setFilteredData(
       dataTable2.filter(
         (user) =>
-          (user.rollno &&
-            user.rollno.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.id &&
+            user.id.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.name &&
             user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.email &&
             user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.department &&
-            user.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.batch &&
-            user.batch.toLowerCase().includes(searchTerm.toLowerCase()))
+            user.department.toLowerCase().includes(searchTerm.toLowerCase())) || // Added ||
+          (user.level &&
+            user.level.toLowerCase().includes(searchTerm.toLowerCase())) || // Added ||
+          (user.assignedcourse &&
+            user.assignedcourse
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()))
       )
     );
   }, [searchTerm, dataTable2]);
-
   function parseExcelData(excelData) {
     const workbook = XLSX.read(excelData, { type: "binary" });
     const sheetName = workbook.SheetNames[0]; // Assuming there's only one sheet
@@ -157,7 +219,6 @@ function Tables() {
       });
       return rowData;
     });
-    console.log(parsedData);
     return parsedData;
   }
   function parseCSVData(csvData) {
@@ -185,13 +246,14 @@ function Tables() {
     dataTable2.forEach((user) => {
       // Check if user object has all required properties
       if (
-        user.rollno &&
+        user.id &&
         user.name &&
         user.email &&
         user.department &&
-        user.batch
+        user.level &&
+        user.assignedcourse
       ) {
-        csvContent += `${user.rollno},${user.name},${user.email},${user.department},${user.batch},${user.activestatus}\n`;
+        csvContent += `${user.id},${user.name},${user.email},${user.department},${user.level},${user.assignedcourse}\n`;
       }
     });
     const blob = new Blob([csvContent], { type: "text/csv" });
@@ -202,7 +264,7 @@ function Tables() {
     a.click();
     URL.revokeObjectURL(url);
   }
-  console.log(dataTable2);
+  // console.log(dataTable2);
 
   function handleInputChange(event) {
     const { name, value } = event.target;
@@ -212,11 +274,17 @@ function Tables() {
     }));
   }
 
+  function handleInputAddChange(event) {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  }
+
   function handleUpdate() {
     // Find the index of the row to be updated
-    const rowIndex = dataTable2.findIndex(
-      (row) => row.rollno === rowDataToEdit.rollno
-    );
+    const rowIndex = dataTable2.findIndex((row) => row.id === rowDataToEdit.id); // Use "id" as the key
     if (rowIndex !== -1) {
       // Update the row data with edited values
       const updatedRowData = { ...dataTable2[rowIndex], ...editedData };
@@ -230,7 +298,7 @@ function Tables() {
   function handleDelete() {
     // Filter out the row to be deleted
     const updatedDataTable = dataTable2.filter(
-      (row) => row.rollno !== rowDataToEdit.rollno
+      (row) => row.id !== rowDataToEdit.id
     );
     setDataTable2(updatedDataTable);
     closeDeleteModal(); // Close the modal after deletion
@@ -238,7 +306,7 @@ function Tables() {
 
   return (
     <>
-      <PageTitle>Student Master</PageTitle>
+      <PageTitle>Faculty Master</PageTitle>
 
       <TableContainer className="mb-8">
         <div className="m-4 flex justify-between items-center">
@@ -265,6 +333,10 @@ function Tables() {
             <Button onClick={handleExportData}>
               <FaDownload className="w-5 h-5" />
             </Button>
+            <div style={{ width: "15px" }}></div>
+            <Button onClick={addFacultyModalOpen}>
+              <IoIosAddCircleOutline className="w-5 h-5" />
+            </Button>
           </div>
         </div>
         <hr className="border-t-1 w-full" />
@@ -273,12 +345,12 @@ function Tables() {
           <TableHeader>
             <tr>
               <TableCell>S no</TableCell>
-              <TableCell>Roll no</TableCell>
+              <TableCell>Faculty Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Department</TableCell>
-              <TableCell>Batch</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>Level Of Proficiency </TableCell>
+              <TableCell>Assignedcourse</TableCell>
               <TableCell>Actions</TableCell>
             </tr>
           </TableHeader>
@@ -295,7 +367,7 @@ function Tables() {
                 <TableCell>
                   <div className="flex items-center text-sm">
                     <div>
-                      <p className="font-semibold">{user.rollno}</p>
+                      <p className="font-semibold">{user.id}</p>
                     </div>
                   </div>
                 </TableCell>
@@ -309,10 +381,10 @@ function Tables() {
                   <span className="text-sm">{user.department}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{user.batch}</span>
+                  <span className="text-sm">{user.level}</span>
                 </TableCell>
                 <TableCell>
-                  <Badge type={user.status}>{user.activestatus}</Badge>
+                  <span className="text-sm">{user.assignedcourse}</span>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-4">
@@ -349,43 +421,23 @@ function Tables() {
       </TableContainer>
       <div></div>
       <Modal isOpen={isEditModalOpen} onClose={closeEditModal}>
-        <ModalHeader>Student Details</ModalHeader>
+        <ModalHeader>Faculty Details</ModalHeader>
         <ModalBody>
           {/* Display the row data in the modal */}
           {rowDataToEdit && (
             <>
-              <p>{rowDataToEdit.rollno}</p>
+              <p>{rowDataToEdit.id}</p>
               <p>{rowDataToEdit.name}</p>
               <p>{rowDataToEdit.email}</p>
               <p>{rowDataToEdit.department}</p>
-              <p>{rowDataToEdit.batch}</p>
+
               <Label className="mt-4">
-                <span>Name</span>
+                <span>Course</span>
                 <Input
                   className="mt-1"
-                  name="name"
-                  placeholder="Poovarasan"
-                  value={editedData.name || ""}
-                  onChange={handleInputChange}
-                />
-              </Label>
-              <Label className="mt-4">
-                <span>Email</span>
-                <Input
-                  className="mt-1"
-                  name="email"
-                  placeholder="poovarasan@bitsathy"
-                  value={editedData.email || ""}
-                  onChange={handleInputChange}
-                />
-              </Label>
-              <Label className="mt-4">
-                <span>Department</span>
-                <Input
-                  className="mt-1"
-                  name="department"
+                  name="assignedcourse"
                   placeholder="CSE"
-                  value={editedData.department || ""}
+                  value={editedData.assignedcourse || ""}
                   onChange={handleInputChange}
                 />
               </Label>
@@ -420,9 +472,92 @@ function Tables() {
           </div>
         </ModalFooter>
       </Modal>
+      <Modal isOpen={isAddFacultyModalOpen} onClose={closeAddFacultyModal}>
+        <ModalHeader>Add Faculty Details</ModalHeader>
+        <ModalBody>
+          <>
+            <Label className="mt-4">
+              <span>Faculty ID</span>
+              <Input
+                name="facultyId"
+                className="mt-1"
+                placeholder="18CS023"
+                value={formData.facultyId}
+                onChange={handleInputAddChange}
+              />
+            </Label>
+            <Label className="mt-4">
+              <span>Name</span>
+              <Input
+                name="name"
+                className="mt-1"
+                placeholder="Poovarasan"
+                value={formData.name}
+                onChange={handleInputAddChange}
+              />
+            </Label>
+            <Label className="mt-4">
+              <span>Email</span>
+              <Input
+                name="email"
+                className="mt-1"
+                placeholder="abc@bitsathy.ac.in"
+                value={formData.email}
+                onChange={handleInputAddChange}
+              />
+            </Label>
+            <Label className="mt-4">
+              <span>Level Of Proficiency</span>
+              <Input
+                name="levelOfProficiency"
+                className="mt-1"
+                placeholder="Ap level 1"
+                value={formData.levelOfProficiency}
+                onChange={handleInputAddChange}
+              />
+            </Label>
+            <Label className="mt-4">
+              <span>Assigned Course</span>
+              <Input
+                name="assignedCourse"
+                className="mt-1"
+                placeholder="DataBase Management"
+                value={formData.assignedCourse}
+                onChange={handleInputAddChange}
+              />
+            </Label>{" "}
+          </>
+        </ModalBody>
+        <ModalFooter>
+          <div className="hidden sm:block">
+            <Button layout="outline" onClick={closeAddFacultyModal}>
+              Cancel
+            </Button>
+          </div>
+          <div className="hidden sm:block">
+            <Button onClick={handleformsubmit}>Add Faculty</Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button
+              block
+              size="large"
+              layout="outline"
+              onClick={closeEditModal}
+            >
+              Cancel
+            </Button>
+          </div>
+          <div className="block w-full sm:hidden">
+            <Button block size="large" onClick={handleUpdate}>
+              Update
+            </Button>
+          </div>
+        </ModalFooter>
+      </Modal>
+
       <Modal isOpen={isDeleteModalOpen} onClose={closeDeleteModal}>
-        <ModalHeader>Student Deletion</ModalHeader>
-        <ModalBody>Your Deleting student Data</ModalBody>
+        <ModalHeader>Faculty Deletion</ModalHeader>
+        <ModalBody>Your Deleting Faculty Data</ModalBody>
         <ModalFooter>
           <div className="hidden sm:block">
             <Button layout="outline" onClick={closeDeleteModal}>

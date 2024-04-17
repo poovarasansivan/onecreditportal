@@ -78,7 +78,7 @@ function Cards() {
           </CardBody>
         </Card>
 
-        <Card colored className="text-white bg-purple-600">
+        <Card colored className="text-white bg-blue-600">
           <CardBody>
             <p className="mb-4 font-semibold">Colored card</p>
             <p>

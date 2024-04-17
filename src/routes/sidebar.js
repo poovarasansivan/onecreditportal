@@ -9,58 +9,29 @@ const routes = [
   {
     path: "/app/dashboard", // the url
     icon: "HomeIcon", // the component being exported from icons/index.js
-    name: "Dashboard", // name that appear in Sidebar
+    name: "Home Page", // name that appear in Sidebar
   },
   {
     path: "/app/studentmasters",
-    icon: "TablesIcon",
+    icon: "FaUsers",
     name: "StudentMaster",
   },
   {
-    path: "/app/assignedcourses",
-    icon: "SiCoursera",
-    name: "Assigned Courses",
+    path: "/app/creditsearned",
+    icon: "GiReceiveMoney",
+    name: "Credits Earned",
   },
   {
     path: "/app/mycourse",
     icon: "SiCoursera",
-    name: "MyCourse",
+    name: "Completed Course",
   },
   {
-    path: "/app/courseregistration",
-    icon: "FormsIcon",
-    name: "CourseRegistration",
+    path: "/app/coursemaster",
+    icon: "SiCoursera",
+    name: "Course Master",
   },
-  {
-    path: "/app/faculty",
-    icon: "FaChalkboardTeacher",
-    name: "Faculty Mapping",
-  },
-  {
-    path: "/app/curriculum",
-    icon: "FormsIcon",
-    name: "Curriculum",
-  },
-  // {
-  //   path: '/app/modals',
-  //   icon: 'TablesIcon',
-  //   name: 'Modals',
-  // },
-  // {
-  //   path: '/app/studentmasters',
-  //   icon: 'TablesIcon',
-  //   name: 'StudentMaster',
-  // },
-  // {
-  //   path: "/app/studentmaster", // the url
-  //   icon: "HomeIcon", // the component being exported from icons/index.js
-  //   name: "Dashboard", // name that appear in Sidebar
-  // },
-  // {
-  //   path: "/app/cards",
-  //   icon: "CardsIcon",
-  //   name: "Cards",
-  // },
+  
 ];
 
 export default routes;

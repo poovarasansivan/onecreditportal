@@ -73,6 +73,8 @@ function Tables() {
             user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.email &&
             user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.credits &&
+            user.credits.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.department &&
             user.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.batch &&
@@ -133,6 +135,8 @@ function Tables() {
             user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.email &&
             user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.credits &&
+            user.credits.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.department &&
             user.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.batch &&
@@ -188,10 +192,11 @@ function Tables() {
         user.rollno &&
         user.name &&
         user.email &&
+        user.credits &&
         user.department &&
         user.batch
       ) {
-        csvContent += `${user.rollno},${user.name},${user.email},${user.department},${user.batch},${user.activestatus}\n`;
+        csvContent += `${user.rollno},${user.name},${user.email},${user.department},${user.credits},${user.batch},${user.activestatus}\n`;
       }
     });
     const blob = new Blob([csvContent], { type: "text/csv" });
@@ -259,8 +264,6 @@ function Tables() {
               style={{ display: "none" }}
               ref={fileInputRef} // Associate ref with file input
             />
-
-            {/* Add a gap between import and download button */}
             <div style={{ width: "15px" }}></div>
             <Button onClick={handleExportData}>
               <FaDownload className="w-5 h-5" />
@@ -276,6 +279,7 @@ function Tables() {
               <TableCell>Roll no</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
+              <TableCell>Credits Earned</TableCell>
               <TableCell>Department</TableCell>
               <TableCell>Batch</TableCell>
               <TableCell>Status</TableCell>
@@ -304,6 +308,9 @@ function Tables() {
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">{user.email}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.credits}</span>
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">{user.department}</span>

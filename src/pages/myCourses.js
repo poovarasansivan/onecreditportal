@@ -10,32 +10,32 @@ const curriculum = [
     id: 1,
     icon: FaDatabase,
     name: "Database Management Systems",
-    faculty: "John Doe",
+    completedsemester:"6"
   },
   {
     id: 2,
     icon: FaCode,
     name: "Data Structures",
-    faculty: "John Doe",
+    completedsemester:"7"
   },
   {
     id: 3,
     icon: FaBook,
     name: "Computer Architecture",
-    faculty: "John Doe",
+    completedsemester:"4"
   },
   {
     id: 4,
     icon: GrTechnology,
     name: "Internet Of Things",
-    faculty: "John Doe",
+    completedsemester:"7"
   },
 ];
 
 function Mycourse() {
   return (
     <>
-      <PageTitle>My Course</PageTitle>
+      <PageTitle>My One Credit Course History</PageTitle>
 
       <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
         {curriculum.map((course) => (
@@ -51,8 +51,8 @@ function Mycourse() {
                 <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
                   {course.name}
                 </p>
-                <p className="text-lg font-medium text-gray-700 dark:text-gray-200">
-                  {course.faculty}
+                <p className="text-sm text-gray-500 dark:text-gray-400"> Semester:{" "}
+                  {course.completedsemester}
                 </p>
               </div>
             </CardBody>

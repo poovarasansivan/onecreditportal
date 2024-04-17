@@ -10,6 +10,7 @@ import { Card, CardBody } from "@windmill/react-ui";
 import { GoDotFill } from "react-icons/go";
 import SectionTitle from "../components/Typography/SectionTitle";
 import RoundIcon from "../components/RoundIcon";
+import { GiReceiveMoney } from "react-icons/gi";
 
 export const Instruction = [
   {
@@ -35,70 +36,70 @@ export const Instruction = [
 ];
 
 function Dashboard() {
-  const [totalstudentcount, setTotalStudentCount] = useState(null);
-  const [totaldepartmentcount, setTotalDepartmentCount] = useState(null);
-  const [totalopenelectivecount, setTotalOpenElectiveCount] = useState(null);
-  const [totalelectivecount, setTotalElectiveCount] = useState(null);
+  // const [totalstudentcount, setTotalStudentCount] = useState(null);
+  // const [totaldepartmentcount, setTotalDepartmentCount] = useState(null);
+  // const [totalopenelectivecount, setTotalOpenElectiveCount] = useState(null);
+  // const [totalelectivecount, setTotalElectiveCount] = useState(null);
 
-  useEffect(() => {
-    fetchOverallStudentCount();
-    fetchOveralldepartmentCount();
-    fetchOverallOpenelctiveCount();
-    fetchOverallelctiveCount();
-  }, []);
+  // useEffect(() => {
+  //   fetchOverallStudentCount();
+  //   fetchOveralldepartmentCount();
+  //   fetchOverallOpenelctiveCount();
+  //   fetchOverallelctiveCount();
+  // }, []);
 
-  const fetchOverallStudentCount = async () => {
-    try {
-      const response = await fetch("http://localhost:5555/totalstudent");
-      const data = await response.json();
-      setTotalStudentCount(data.totalStudents);
-    } catch (error) {
-      console.error("Error fetching overall count:", error);
-    }
-  };
-  const fetchOveralldepartmentCount = async () => {
-    try {
-      const response = await fetch("http://localhost:5555/departmentcount");
-      const data = await response.json();
-      setTotalDepartmentCount(data.totaldepartment);
-    } catch (error) {
-      console.error("Error fetching overall count:", error);
-    }
-  };
-  const fetchOverallOpenelctiveCount = async () => {
-    try {
-      const response = await fetch("http://localhost:5555/openelectivecount");
-      const data = await response.json();
-      setTotalOpenElectiveCount(data.totalOpenelective);
-    } catch (error) {
-      console.error("Error fetching overall count:", error);
-    }
-  };
-  const fetchOverallelctiveCount = async () => {
-    try {
-      const response = await fetch("http://localhost:5555/totalElectivecount");
-      const data = await response.json();
-      setTotalElectiveCount(data.totalelective);
-    } catch (error) {
-      console.error("Error fetching overall count:", error);
-    }
-  };
-//  console.log(totalelectivecount)
+  // const fetchOverallStudentCount = async () => {
+  //   try {
+  //     const response = await fetch("http://localhost:5555/totalstudent");
+  //     const data = await response.json();
+  //     setTotalStudentCount(data.totalStudents);
+  //   } catch (error) {
+  //     console.error("Error fetching overall count:", error);
+  //   }
+  // };
+  // const fetchOveralldepartmentCount = async () => {
+  //   try {
+  //     const response = await fetch("http://localhost:5555/departmentcount");
+  //     const data = await response.json();
+  //     setTotalDepartmentCount(data.totaldepartment);
+  //   } catch (error) {
+  //     console.error("Error fetching overall count:", error);
+  //   }
+  // };
+  // const fetchOverallOpenelctiveCount = async () => {
+  //   try {
+  //     const response = await fetch("http://localhost:5555/openelectivecount");
+  //     const data = await response.json();
+  //     setTotalOpenElectiveCount(data.totalOpenelective);
+  //   } catch (error) {
+  //     console.error("Error fetching overall count:", error);
+  //   }
+  // };
+  // const fetchOverallelctiveCount = async () => {
+  //   try {
+  //     const response = await fetch("http://localhost:5555/totalElectivecount");
+  //     const data = await response.json();
+  //     setTotalElectiveCount(data.totalelective);
+  //   } catch (error) {
+  //     console.error("Error fetching overall count:", error);
+  //   }
+  // };
+  //  console.log(totalelectivecount)
 
   return (
     <>
       <PageTitle>Dashboard</PageTitle>
       <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-        <InfoCard title="Total Students" value={totalstudentcount}>
+        <InfoCard title="Total Course Completed" value="4">
           <RoundIcon
-            icon={FaUsers}
+            icon={SiNextra}
             iconColorClass="text-orange-500 dark:text-orange-100"
             bgColorClass="bg-orange-100 dark:bg-orange-500"
             className="mr-4"
           />
         </InfoCard>
 
-        <InfoCard title="Total Departments" value={totaldepartmentcount}>
+        <InfoCard title="Total Departments" value="22">
           <RoundIcon
             icon={SiUnacademy}
             iconColorClass="text-green-500 dark:text-green-100"
@@ -107,7 +108,7 @@ function Dashboard() {
           />
         </InfoCard>
 
-        <InfoCard title="Open Elective Courses" value={totalopenelectivecount}>
+        <InfoCard title="Total One Credit Courses" value="21">
           <RoundIcon
             icon={SiCoursera}
             iconColorClass="text-blue-500 dark:text-blue-100"
@@ -115,17 +116,16 @@ function Dashboard() {
             className="mr-4"
           />
         </InfoCard>
-
-        <InfoCard title="Elective Courses" value={totalelectivecount}>
+        <InfoCard title="Available Credits" value="12">
           <RoundIcon
-            icon={SiNextra}
-            iconColorClass="text-teal-500 dark:text-teal-100"
-            bgColorClass="bg-teal-100 dark:bg-teal-500"
+            icon={GiReceiveMoney}
+            iconColorClass="text-purple-500 dark:text-purple-100"
+            bgColorClass="bg-purple-100 dark:bg-purple-500"
             className="mr-4"
           />
         </InfoCard>
       </div>
-
+{/* 
       <div>
         <SectionTitle>Instructions</SectionTitle>
 
@@ -141,7 +141,7 @@ function Dashboard() {
             ))}
           </CardBody>
         </Card>
-      </div>
+      </div> */}
     </>
   );
 }

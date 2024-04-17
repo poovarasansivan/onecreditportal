@@ -21,38 +21,62 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 
 const response2 = [
   {
+    rollno: "776211CS239",
+    name: "Poovarasan",
+    department: "Computer Science And Engineering",
+    currentsemester: "6",
+    coursecompletedsem: "4",
     course_id: "18XX021",
     course_name: "Node Js",
+    creditseligible:"3",
+
+  },
+  {
+    rollno: "776211CS248",
+    name: "Praveen",
     department: "Computer Science And Engineering",
-    semester: "6",
+    currentsemester: "6",
+    coursecompletedsem: "3",
+    course_id: "18XX021",
+    course_name: "Node Js",
+    creditseligible:"3",
+
   },
   {
-    course_id: "18XH120",
-    course_name: "Amazon Cloud Architecture",
-    department: "Computer Scinence And Engineering",
-    semester: "5",
+    rollno: "776212AD145",
+    name: "Ajay S",
+    department: "Artifical Intelligence",
+    currentsemester: "6",
+    coursecompletedsem: "4",
+    course_id: "18XX141",
+    course_name: "Amzaon Cloud Architecture",
+    creditseligible:"3",
   },
   {
-    course_id: "19CH203",
-    course_name: "GO Lang REST API",
-    department: "Computer Scinence And Engineering",
-    semester: "6",
+    rollno: "776212AD198",
+    name: "OruttuMilaa",
+    department: "Artifical Intelligence",
+    currentsemester: "6",
+    coursecompletedsem: "4",
+    course_id: "18XX021",
+    course_name: "Node Js",
+    creditseligible:"3",
+
   },
   {
-    course_id: "20MS208",
-    course_name: "Industrial Metaverse",
-    department: "Artifical Integlligence And Data Science",
-    semester: "6",
-  },
-  {
-    course_id: "20HM355",
-    course_name: "Full Stack Development Using Python",
+    rollno: "776221CS145",
+    name: "Prakash P",
     department: "Computer Science And Engineering",
-    semester: "6",
+    currentsemester: "5",
+    coursecompletedsem: "4",
+    course_id: "18XX021",
+    course_name: "Node Js",
+    creditseligible:"3",
+
   },
 ];
 
-function Assignedcourse() {
+function Creditearned() {
   const [dataTable2, setDataTable2] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,10 +86,14 @@ function Assignedcourse() {
   const [editedData, setEditedData] = useState({}); // State to track edited data
   const [addcourseModalOpen, setAddcourseModalOpen] = useState(false);
   const [formData, setFormData] = useState({
+    rollno: "",
+    name: "",
+    currentsemester: "",
+    coursecompletedsem: "",
     course_id: "",
     course_name: "",
     department: "",
-    semester: "",
+    creditseligible:""
   });
   const resultsPerPage = 8;
   const totalResults = response2.length;
@@ -143,16 +171,28 @@ function Assignedcourse() {
     setFilteredData(
       dataTable2.filter(
         (user) =>
+          (user.rollno &&
+            user.rollno.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.name &&
+            user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.department &&
+            user.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.currentsemester &&
+            user.currentsemester
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (user.coursecompletedsem &&
+            user.coursecompletedsem
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
           (user.course_id &&
             user.course_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.course_name &&
             user.course_name
               .toLowerCase()
               .includes(searchTerm.toLowerCase())) ||
-          (user.department &&
-            user.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.semester &&
-            user.semester.toLowerCase().includes(searchTerm.toLowerCase()))
+          (user.creditseligible &&
+            user.creditseligible.toLowerCase().includes(searchTerm.toLowerCase()))
       )
     );
   }, [searchTerm, dataTable2]);
@@ -209,16 +249,20 @@ function Assignedcourse() {
     // This depends on the format of your data and how you want to export it
     // Example logic:
     let csvContent =
-      "Roll no,Name,Department,CoreSubject1, CourseSubject2,CoreSubject3,CoreSubject4,ElectiveCourse1,ElectiveCourse2,OpenElective,AddonCourse,HonoursCourse1,HonoursCourse2 \n";
+      "Roll no,Name,Department,Current Semester, Course Completed Semester,Course ID,Course Name,Credits Eligible \n";
     dataTable2.forEach((user) => {
       // Check if user object has all required properties
       if (
+        user.rollno &&
+        user.name &&
+        user.department &&
+        user.currentsemester &&
+        user.coursecompletedsem &&
         user.course_id &&
         user.course_name &&
-        user.department &&
-        user.semester
+        user.creditseligible
       ) {
-        csvContent += `${user.course_id},${user.course_name},${user.department},${user.semester}\n`;
+        csvContent += `${user.rollno},${user.name},${user.department},${user.currentsemester},${user.coursecompletedsem},${user.course_id},${user.course_name},${user.creditseligible}\n`;
       }
     });
     const blob = new Blob([csvContent], { type: "text/csv" });
@@ -296,10 +340,14 @@ function Assignedcourse() {
           <TableHeader>
             <tr>
               <TableCell>S no</TableCell>
+              <TableCell>Roll no</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Department</TableCell>
+              <TableCell>Current Semester</TableCell>
+              <TableCell>Course Completed Semester</TableCell>
               <TableCell>Course ID</TableCell>
               <TableCell>Course Name</TableCell>
-              <TableCell>Department</TableCell>
-              <TableCell>Semester</TableCell>
+              <TableCell>Eligible Credits</TableCell>
               <TableCell>Action</TableCell>
             </tr>
           </TableHeader>
@@ -316,18 +364,34 @@ function Assignedcourse() {
                 <TableCell>
                   <div className="flex items-center text-sm">
                     <div>
-                      <p className="font-semibold">{user.course_id}</p>
+                      <p className="font-semibold">{user.rollno}</p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{user.course_name}</span>
+                  <span className="text-sm">{user.name}</span>
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">{user.department}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">Semester {user.semester}</span>
+                  <span className="text-sm">
+                    Semester {user.currentsemester}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">
+                    Semester {user.coursecompletedsem}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.course_id}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.course_name}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.creditseligible}</span>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-4">
@@ -544,4 +608,4 @@ function Assignedcourse() {
   );
 }
 
-export default Assignedcourse;
+export default Creditearned;

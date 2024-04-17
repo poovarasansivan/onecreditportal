@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { SidebarContext } from "../context/SidebarContext";
+import ProfileImage from "../assets/profile.jpg";
 import {
   SearchIcon,
   MoonIcon,
@@ -16,6 +17,7 @@ import {
   DropdownItem,
   WindmillContext,
 } from "@windmill/react-ui";
+import Logout from "./logout";
 
 function Header() {
   const { mode, toggleMode } = useContext(WindmillContext);
@@ -29,10 +31,10 @@ function Header() {
 
   return (
     <header className="z-40 py-4 bg-white shadow-bottom dark:bg-gray-800">
-      <div className="container flex items-center justify-between h-full px-6 mx-auto text-purple-600 dark:text-purple-300">
+      <div className="container flex items-center justify-between h-full px-6 mx-auto text-blue-600 dark:text-blue-300">
         {/* <!-- Mobile hamburger --> */}
         <button
-          className="p-1 mr-5 -ml-1 rounded-md lg:hidden focus:outline-none focus:shadow-outline-purple"
+          className="p-1 mr-5 -ml-1 rounded-md lg:hidden focus:outline-none focus:shadow-outline-blue"
           onClick={toggleSidebar}
           aria-label="Menu"
         >
@@ -40,13 +42,13 @@ function Header() {
         </button>
         {/* <!-- Search input --> */}
         <div className="flex justify-center flex-1 lg:mr-32">
-          <div className="relative w-full max-w-xl mr-6 focus-within:text-purple-500">
+          <div className="relative w-full max-w-xl mr-6 focus-within:text-blue-600">
             <div className="absolute inset-y-0 flex items-center pl-2">
               <SearchIcon className="w-4 h-4" aria-hidden="true" />
             </div>
             <Input
               className="pl-8 text-gray-700"
-              placeholder="Search for projects"
+              placeholder="Search "
               aria-label="Search"
             />
           </div>
@@ -55,7 +57,7 @@ function Header() {
           {/* <!-- Theme toggler --> */}
           <li className="flex">
             <button
-              className="rounded-md focus:outline-none focus:shadow-outline-purple"
+              className="rounded-md focus:outline-none focus:shadow-outline-blue"
               onClick={toggleMode}
               aria-label="Toggle color mode"
             >
@@ -68,14 +70,14 @@ function Header() {
           </li>
           <li className="relative">
             <button
-              className="rounded-full focus:shadow-outline-purple focus:outline-none"
+              className="rounded-full focus:shadow-outline-blue focus:outline-none"
               onClick={handleProfileClick}
               aria-label="Account"
               aria-haspopup="true"
             >
               <Avatar
                 className="align-middle"
-                src="https://images.unsplash.com/photo-1502378735452-bc7d86632805?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=aa3a807e1bbdfd4364d1f449eaa96d82"
+                src={ProfileImage}
                 alt=""
                 aria-hidden="true"
               />
@@ -85,23 +87,9 @@ function Header() {
               isOpen={isProfileMenuOpen}
               onClose={() => setIsProfileMenuOpen(false)}
             >
-              <DropdownItem tag="a" href="#">
-                <OutlinePersonIcon
-                  className="w-4 h-4 mr-3"
-                  aria-hidden="true"
-                />
-                <span>Profile</span>
-              </DropdownItem>
-              <DropdownItem tag="a" href="#">
-                <OutlineCogIcon className="w-4 h-4 mr-3" aria-hidden="true" />
-                <span>Settings</span>
-              </DropdownItem>
-              <DropdownItem onClick={() => alert("Log out!")}>
-                <OutlineLogoutIcon
-                  className="w-4 h-4 mr-3"
-                  aria-hidden="true"
-                />
-                <span>Log out</span>
+              
+              <DropdownItem >
+                <Logout/>
               </DropdownItem>
             </Dropdown>
           </li>

@@ -1,13 +1,38 @@
 import React from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useHistory } from "react-router-dom";
 import ImageLight from "../assets/img/login-office.jpeg";
 import ImageDark from "../assets/img/login-office-dark.jpeg";
 import { GithubIcon, TwitterIcon } from "../icons";
 import { Label, Input, Button } from "@windmill/react-ui";
 import { FcGoogle } from "react-icons/fc";
+import { GoogleLogin } from "react-google-login";
+import { gapi } from "gapi-script";
+import { useState, useEffect } from "react";
+import LoginImage from "../assets/image.png";
 
 function Login() {
+  const clientId =
+    "761501369349-o70hbrrm16jvbm924h9vk40r7k127bq2.apps.googleusercontent.com";
+  const history = useHistory(); // Initialize useHistory hook
+  useEffect(() => {
+    function start() {
+      gapi.client.init({
+        clientId: clientId,
+        scope: "",
+      });
+    }
+    gapi.load("client:auth2", start);
+  }, []);
+
+  const onSuccess = async (res) => {
+    console.log("LOGIN SUCCESS!", res.profileObj.email);
+    history.push("/app");
+  };
+
+  const onFailure = (res) => {
+    console.log("Login failed", res);
+  };
+
   return (
     <div className="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
       <div className="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800">
@@ -16,13 +41,14 @@ function Login() {
             <img
               aria-hidden="true"
               className="object-cover w-full h-full dark:hidden"
-              src={ImageLight}
+              src={LoginImage}
               alt="Office"
             />
+
             <img
               aria-hidden="true"
               className="hidden object-cover w-full h-full dark:block"
-              src={ImageDark}
+              src={LoginImage}
               alt="Office"
             />
           </div>
@@ -55,10 +81,16 @@ function Login() {
 
               <hr className="my-8" />
 
-              <Button block layout="outline">
-                <FcGoogle className="w-4 h-4 mr-2" aria-hidden="true" />
-                Google Signin
-              </Button>
+              <div className="flex justify-center">
+                <GoogleLogin
+                  clientId={clientId}
+                  buttonText="Continue with Google"
+                  onSuccess={onSuccess}
+                  onFailure={onFailure}
+                  cookiePolicy={"single_host_origin"}
+                  isSignedIn={true}
+                />
+              </div>
             </div>
           </main>
         </div>

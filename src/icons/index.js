@@ -28,8 +28,12 @@ import { ReactComponent as OutlineCogIcon } from './outlineCog.svg'
 import { ReactComponent as OutlineLogoutIcon } from './outlineLogout.svg'
 import { SiCoursera } from "react-icons/si";
 import { FaChalkboardTeacher } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa";
+import { GiReceiveMoney } from "react-icons/gi";
 
 export {
+  GiReceiveMoney,
+  FaUsers,
   FaChalkboardTeacher,
   SiCoursera,
   ButtonsIcon,

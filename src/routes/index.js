@@ -2,16 +2,10 @@ import { lazy } from "react";
 
 // use lazy for better code splitting, a.k.a. load faster
 const Dashboard = lazy(() => import("../pages/Dashboard"));
-const Forms = lazy(() => import("../pages/courseForms"));
-const Cards = lazy(() => import("../pages/Cards"));
-const Curriculum = lazy(() => import("../pages/curriculum"));
 const Assignedcourse = lazy(() => import("../pages/assignedcourse"));
 const MyCourse = lazy(()=>import("../pages/myCourses")); 
-const Buttons = lazy(() => import("../pages/Buttons"));
-const Modals = lazy(() => import("../pages/Modals"));
 const StudentMaster = lazy(() => import("../pages/Tables"));
-const Page404 = lazy(() => import("../pages/404"));
-const Faculty = lazy(()=>import("../pages/faculty"))
+const creditsearned = lazy(()=>import("../pages/creditsearned"));
 /**
  * ⚠ These are internal routes!
  * They will be rendered inside the app, using the default `containers/Layout`.
@@ -28,41 +22,26 @@ const routes = [
     component: Dashboard, // view rendered
   },
   {
-    path: "/courseregistration",
-    component: Forms,
-  },
-  {
-    path: "/assignedcourses",
-    component: Assignedcourse,
+    path: "/creditsearned",
+    component: creditsearned,
   },
   {
     path: "/mycourse",
     component: MyCourse,
   },
   {
+    path: "/assignedcourses",
+    component: Assignedcourse,
+  },
+  {
+    path: "/coursemaster",
+    component: Assignedcourse,
+  },
+  {
     path: "/studentmasters",
     component: StudentMaster,
-  },
-  {
-    path: "/faculty",
-    component: Faculty,
-  },
-  {
-    path: "/curriculum",
-    component: Curriculum,
-  },
-  {
-    path: "/cards",
-    component: Cards,
-  },
-  {
-    path: "/modals",
-    component: Modals,
-  },
-  {
-    path: "/404",
-    component: Page404,
-  },
+  }
+  
 ];
 
 export default routes;

@@ -30,8 +30,10 @@ import { SiCoursera } from "react-icons/si";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa";
 import { GiReceiveMoney } from "react-icons/gi";
+import { IoEyeOutline } from "react-icons/io5";
 
 export {
+  IoEyeOutline,
   GiReceiveMoney,
   FaUsers,
   FaChalkboardTeacher,

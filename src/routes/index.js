@@ -6,6 +6,8 @@ const Assignedcourse = lazy(() => import("../pages/assignedcourse"));
 const MyCourse = lazy(()=>import("../pages/myCourses")); 
 const StudentMaster = lazy(() => import("../pages/Tables"));
 const creditsearned = lazy(()=>import("../pages/creditsearned"));
+const ApplyForms = lazy(()=>import("../pages/applycourse"));
+const ApproveCertifications = lazy(()=>import("../pages/overallapprove"));
 /**
  * ⚠ These are internal routes!
  * They will be rendered inside the app, using the default `containers/Layout`.
@@ -22,12 +24,20 @@ const routes = [
     component: Dashboard, // view rendered
   },
   {
+    path: "/applycourse", // the url
+    component: ApplyForms, // view rendered
+  },
+  {
     path: "/creditsearned",
     component: creditsearned,
   },
   {
     path: "/mycourse",
     component: MyCourse,
+  },
+  {
+    path:"/approvecourse",
+    component:ApproveCertifications,
   },
   {
     path: "/assignedcourses",

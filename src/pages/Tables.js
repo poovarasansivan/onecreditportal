@@ -13,7 +13,7 @@ import {
   Input,
 } from "@windmill/react-ui";
 import { FaDownload } from "react-icons/fa6";
-import { EditIcon, TrashIcon } from "../icons";
+import { IoEyeOutline,EditIcon, TrashIcon } from "../icons";
 import PageTitle from "../components/Typography/PageTitle";
 import response from "../utils/demo/tableData";
 import * as XLSX from "xlsx";
@@ -22,15 +22,32 @@ import { Label } from "@windmill/react-ui";
 
 // Make a copy of the data for the second table
 const response2 = response.concat([]);
-
+const coursedetails = [
+    {
+      "rollno":"7376211CS239",
+      "course completed":"2",
+      "coursename1":"XML Web Services",
+      "coursename2":"Node js",
+      "creditsearned":"6",
+    },
+    {
+      "rollno":"7376211CS240",
+      "course completed":"2",
+      "coursename1":"XML Web Services",
+      "coursename2":"Node js",
+      "creditsearned":"6",
+    },
+]
 function Tables() {
   const [dataTable2, setDataTable2] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [rowDataToEdit, setRowDataToEdit] = useState(null); // State to store data of the row being edited
   const [editedData, setEditedData] = useState({}); // State to track edited data
+  const [courseDetails, setCourseDetails] = useState(null); // State to hold course details for the selected student
 
   const resultsPerPage = 8;
   const totalResults = response.length;
@@ -49,7 +66,20 @@ function Tables() {
     setRowDataToEdit(rowData); // Set the data of the row being edited
     setIsEditModalOpen(true);
   }
+  function openViewModal(rowData) {
+    setRowDataToEdit(rowData);
+    setIsViewModalOpen(true);
+    // Fetch course details for the selected student
+    const selectedStudentCourseDetails = coursedetails.find(
+      (course) => course.rollno === rowData.rollno
+    );
+    setCourseDetails(selectedStudentCourseDetails);
+  }
+  function closeViewModal(){
+    setIsViewModalOpen(false);
+    setCourseDetails(null); // Reset course details when modal is closed
 
+  }
   function closeEditModal() {
     setIsEditModalOpen(false);
   }
@@ -323,6 +353,14 @@ function Tables() {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-4">
+                  <Button
+                      layout="link"
+                      size="icon"
+                      aria-label="View"
+                      onClick={() => openViewModal(user)} // Pass the row data to the delete modal
+                    >
+                      <IoEyeOutline className="w-5 h-5" aria-hidden="true" />
+                    </Button>
                     <Button
                       layout="link"
                       size="icon"
@@ -339,6 +377,7 @@ function Tables() {
                     >
                       <TrashIcon className="w-5 h-5" aria-hidden="true" />
                     </Button>
+                    
                   </div>
                 </TableCell>
               </TableRow>
@@ -427,6 +466,7 @@ function Tables() {
           </div>
         </ModalFooter>
       </Modal>
+      
       <Modal isOpen={isDeleteModalOpen} onClose={closeDeleteModal}>
         <ModalHeader>Student Deletion</ModalHeader>
         <ModalBody>Your Deleting student Data</ModalBody>
@@ -456,6 +496,45 @@ function Tables() {
           </div>
         </ModalFooter>
       </Modal>
+
+
+      <Modal isOpen={isViewModalOpen} onClose={closeViewModal}>
+        <ModalHeader>Student Course Details</ModalHeader>
+        <ModalBody>
+          {courseDetails && (
+            <div>
+              <div className="flex justify-start">
+              <Label className="mr-2">
+                    <span className="font-semibold">Roll No:</span>
+                  </Label>
+                  <p>{courseDetails.rollno}</p>
+              </div>
+              <div className="flex justify-start">
+              <Label className="mr-2">
+                    <span className="font-semibold">Course Name 1:</span>
+                  </Label>
+                  <p>{courseDetails.coursename1}</p>
+              </div>
+              <div className="flex justify-start">
+              <Label className="mr-2">
+                    <span className="font-semibold">Course Name 2:</span>
+                  </Label>
+                  <p>{courseDetails.coursename2}</p>
+              </div>
+              <div className="flex justify-start">
+              <Label className="mr-2">
+                    <span className="font-semibold">Credits Earned:</span>
+                  </Label>
+                  <p>{courseDetails.creditsearned}</p>
+              </div>
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button onClick={closeViewModal}>Close</Button>
+        </ModalFooter>
+      </Modal>
+    
     </>
   );
 }

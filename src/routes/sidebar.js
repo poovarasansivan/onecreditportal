@@ -22,6 +22,16 @@ const routes = [
     name: "Credits Earned",
   },
   {
+    path: "/app/applycourse",
+    icon: "FormsIcon",
+    name: "Apply Course",
+  },
+  {
+    path: "/app/approvecourse",
+    icon: "SiCoursera",
+    name: "Approve Course",
+  },
+  {
     path: "/app/mycourse",
     icon: "SiCoursera",
     name: "Completed Course",

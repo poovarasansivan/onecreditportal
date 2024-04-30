@@ -3,20 +3,6 @@ import PageTitle from "../components/Typography/PageTitle";
 import { Input, Label, Select } from "@windmill/react-ui";
 import { Button } from "@windmill/react-ui";
 
-const Department = [
-  {
-    department: "CSE",
-    courses: ["Course 1", "Course 2", "Course 3"],
-  },
-  {
-    department: "ISE",
-    courses: ["Course 4", "Course 5", "Course 6"],
-  },
-  {
-    department: "CE",
-    courses: ["Course 7", "Course 8", "Course 9"],
-  },
-];
 
 function Forms() {
   const [academicYear, setAcademicYear] = useState("");
@@ -64,15 +50,7 @@ function Forms() {
   const handleAddonCourseChange = (e) => {
     setAddonCourse(e.target.value);
   };
-  const getSemesterOptions = () => {
-    if (academicYear === "2021-2025") {
-      return ["Semester 6", "Semester 7"];
-    } else if (academicYear === "2022-2026") {
-      return ["Semester 7", "Semester 8"];
-    } else {
-      return [];
-    }
-  };
+
 
   const handleSubmit = () => {
     // Logging all the input data
@@ -98,33 +76,7 @@ function Forms() {
           <span>Name</span>
           <Input className="mt-1" placeholder="Poovarasan" />
         </Label>
-        <div className="mt-4">
-          <Label>Academic year</Label>
-          <div className="mt-2">
-            <Label radio>
-              <Input
-                type="radio"
-                value="2021-2025"
-                name="academicYear"
-                checked={academicYear === "2021-2025"}
-                onChange={handleAcademicYearChange}
-              />
-              <span className="ml-2">2023-2024</span>
-            </Label>
-            <Label className="ml-6" radio>
-              <Input
-                type="radio"
-                value="2022-2026"
-                name="academicYear"
-                checked={academicYear === "2022-2026"}
-                onChange={handleAcademicYearChange}
-              />
-              <span className="ml-2">2024-2025</span>
-            </Label>
-          </div>
-        </div>
-
-        {academicYear && (
+    
           <div className="mt-4">
             <Label>Department</Label>
             <div className="mt-2">
@@ -142,8 +94,7 @@ function Forms() {
               </Select>
             </div>
           </div>
-        )}
-        {department && (
+  
           <div className="mt-4">
             <Label>Semester</Label>
             <div className="mt-2">
@@ -160,112 +111,8 @@ function Forms() {
               ))}
             </div>
           </div>
-        )}
 
-        {semester && (
-          <div className="mt-4">
-            <Label>Honour/Minors Registered</Label>
-            <div className="mt-2">
-              <Select
-                className="mt-1"
-                onChange={handleHonoursMinorsChange}
-                value={honoursMinors}
-              >
-                <option value="">Select</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-              </Select>
-            </div>
-          </div>
-        )}
 
-        {(honoursMinors === "Yes" || honoursMinors === "No") && (
-          <div className="mt-4">
-            <Label>Course 1</Label>
-            <div className="mt-2">
-              <Select
-                className="mt-1"
-                value={selectedCourse1}
-                onChange={(e) => handleCourseChange(1, e.target.value)}
-              >
-                <option value="">Select Course</option>
-                {courses.map((course, index) => (
-                  <option key={index} value={course}>
-                    {course}
-                  </option>
-                ))}
-              </Select>
-            </div>
-          </div>
-        )}
-
-        {(honoursMinors === "Yes" || honoursMinors === "No") && (
-          <div className="mt-4">
-            <Label>Course 2</Label>
-            <div className="mt-2">
-              <Select
-                className="mt-1"
-                value={selectedCourse2}
-                onChange={(e) => handleCourseChange(2, e.target.value)}
-              >
-                <option value="">Select Course</option>
-                {courses.map((course, index) => (
-                  <option key={index} value={course}>
-                    {course}
-                  </option>
-                ))}
-              </Select>
-            </div>
-          </div>
-        )}
-
-        {(honoursMinors === "Yes" || honoursMinors === "No") && (
-          <div className="mt-4">
-            <Label>Open Elective Course</Label>
-            <div className="mt-2">
-              <Select
-                className="mt-1"
-                value={openElective}
-                onChange={handleopenElectiveChange}
-              >
-                <option value="">Select Course</option>
-                {courses.map((course, index) => (
-                  <option key={index} value={course}>
-                    {course}
-                  </option>
-                ))}
-              </Select>
-            </div>
-          </div>
-        )}
-
-        {honoursMinors === "No" && courses.length > 0 && (
-          <div className="mt-4">
-            <Label>Addon Course </Label>
-            <div className="mt-2">
-              <Select
-                className="mt-1"
-                value={addonCourse}
-                onChange={handleAddonCourseChange}
-              >
-                <option value="">Select Course</option>
-                {courses.map((course, index) => (
-                  <option key={index} value={course}>
-                    {course}
-                  </option>
-                ))}
-              </Select>
-            </div>
-          </div>
-        )}
-
-        <Label className="mt-6" check>
-          <Input type="checkbox" />
-          <span className="ml-2">
-            I agree to the{" "}
-            <span className="text-gray-500">terms and conditions.</span>
-          </span>
-        </Label>
         <div className="mt-5">
           <Button onClick={handleSubmit}>Register</Button>
         </div>

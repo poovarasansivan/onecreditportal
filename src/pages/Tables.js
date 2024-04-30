@@ -13,7 +13,7 @@ import {
   Input,
 } from "@windmill/react-ui";
 import { FaDownload } from "react-icons/fa6";
-import { IoEyeOutline,EditIcon, TrashIcon } from "../icons";
+import { IoEyeOutline, EditIcon, TrashIcon } from "../icons";
 import PageTitle from "../components/Typography/PageTitle";
 import response from "../utils/demo/tableData";
 import * as XLSX from "xlsx";
@@ -22,22 +22,7 @@ import { Label } from "@windmill/react-ui";
 
 // Make a copy of the data for the second table
 const response2 = response.concat([]);
-const coursedetails = [
-    {
-      "rollno":"7376211CS239",
-      "course completed":"2",
-      "coursename1":"XML Web Services",
-      "coursename2":"Node js",
-      "creditsearned":"6",
-    },
-    {
-      "rollno":"7376211CS240",
-      "course completed":"2",
-      "coursename1":"XML Web Services",
-      "coursename2":"Node js",
-      "creditsearned":"6",
-    },
-]
+
 function Tables() {
   const [dataTable2, setDataTable2] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -50,7 +35,7 @@ function Tables() {
   const [courseDetails, setCourseDetails] = useState(null); // State to hold course details for the selected student
 
   const resultsPerPage = 8;
-  const totalResults = response.length;
+  const totalResults = dataTable2.length;
 
   const [pageTable2, setPageTable2] = useState(1);
   useEffect(() => {
@@ -62,6 +47,10 @@ function Tables() {
     );
   }, [pageTable2]);
 
+  useEffect(() => {
+    fetchOverallStudentData();
+  }, []);
+
   function openEditModal(rowData) {
     setRowDataToEdit(rowData); // Set the data of the row being edited
     setIsEditModalOpen(true);
@@ -70,15 +59,27 @@ function Tables() {
     setRowDataToEdit(rowData);
     setIsViewModalOpen(true);
     // Fetch course details for the selected student
-    const selectedStudentCourseDetails = coursedetails.find(
-      (course) => course.rollno === rowData.rollno
-    );
-    setCourseDetails(selectedStudentCourseDetails);
+    fetchCourseDetails(rowData.rollno);
   }
-  function closeViewModal(){
+  
+  async function fetchCourseDetails(rollno) {
+    try {
+      const response = await fetch(`http://localhost:5555/getcourse/${rollno}`);
+      if (response.ok) {
+        const courseDetails = await response.json();
+        setCourseDetails(courseDetails);
+      } else {
+        console.error("Failed to fetch course details");
+      }
+    } catch (error) {
+      console.error("Error fetching course details:", error);
+    }
+  }
+  
+
+  function closeViewModal() {
     setIsViewModalOpen(false);
     setCourseDetails(null); // Reset course details when modal is closed
-
   }
   function closeEditModal() {
     setIsEditModalOpen(false);
@@ -92,6 +93,62 @@ function Tables() {
   function closeDeleteModal() {
     setIsDeleteModalOpen(false);
   }
+  async function fetchOverallStudentData() {
+    try {
+      const response = await fetch("http://localhost:5555/getstudent");
+      const data = await response.json();
+      const mappedData = data.map((student) => ({
+        rollno: student.rollno,
+        name: student.name,
+        email: student.email,
+        department: student.department,
+        creditsearned: student.creditsearned,
+        batch: student.batch,
+        status: student.status,
+      }));
+      setDataTable2(mappedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  function handleUpdate() {
+    // Find the index of the row to be updated
+    const rowIndex = dataTable2.findIndex(
+      (row) => row.rollno === rowDataToEdit.rollno
+    );
+    if (rowIndex !== -1) {
+      // Update the row data with edited values
+      const updatedRowData = { ...dataTable2[rowIndex], ...editedData };
+      const updatedDataTable = [...dataTable2];
+      updatedDataTable[rowIndex] = updatedRowData;
+      setDataTable2(updatedDataTable);
+      closeEditModal(); // Close the modal after updating
+      updateDataInBackend(updatedRowData);
+    }
+  }
+
+  async function updateDataInBackend(updatedRowData) {
+    try {
+      const response = await fetch(
+        `http://localhost:5555/updatestudent/${updatedRowData.rollno}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedRowData),
+        }
+      );
+      if (response.ok) {
+        console.log("Data updated successfully");
+      } else {
+        console.error("Failed to update data");
+      }
+    } catch (error) {
+      console.error("Error updating data:", error);
+    }
+  }
 
   useEffect(() => {
     setFilteredData(
@@ -103,8 +160,10 @@ function Tables() {
             user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.email &&
             user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.credits &&
-            user.credits.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.creditsearned &&
+            user.creditsearned
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
           (user.department &&
             user.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.batch &&
@@ -165,8 +224,10 @@ function Tables() {
             user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.email &&
             user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.credits &&
-            user.credits.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.creditsearned &&
+            user.creditsearned
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
           (user.department &&
             user.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.batch &&
@@ -211,22 +272,54 @@ function Tables() {
     return parsedData;
   }
 
+  function handleDelete() {
+    // Filter out the row to be deleted
+    const updatedDataTable = dataTable2.filter(
+      (row) => row.rollno !== rowDataToEdit.rollno
+    );
+    setDataTable2(updatedDataTable);
+    closeDeleteModal(); // Close the modal after deletion
+  }
+  async function handleDelete() {
+    try {
+      const response = await fetch(
+        `http://localhost:5555/deletestudent/${rowDataToEdit.rollno}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (response.ok) {
+        console.log("Data deleted successfully");
+        const updatedDataTable = dataTable2.filter(
+          (row) => row.rollno !== rowDataToEdit.rollno
+        );
+        setDataTable2(updatedDataTable);
+        closeDeleteModal();
+      } else {
+        console.error("Failed to delete data");
+      }
+    } catch (error) {
+      console.error("Error deleting data:", error);
+    }
+  }
+
   function handleExportData() {
     // Logic to export data as a CSV file
     // This depends on the format of your data and how you want to export it
     // Example logic:
-    let csvContent = "Roll no,Name,Email,Department,Status\n";
+    let csvContent =
+      "Roll no,Name,Email,Department,Credits Earned,Batch,Status\n";
     dataTable2.forEach((user) => {
       // Check if user object has all required properties
       if (
         user.rollno &&
         user.name &&
         user.email &&
-        user.credits &&
+        user.creditsearned &&
         user.department &&
         user.batch
       ) {
-        csvContent += `${user.rollno},${user.name},${user.email},${user.department},${user.credits},${user.batch},${user.activestatus}\n`;
+        csvContent += `${user.rollno},${user.name},${user.email},${user.department},${user.creditsearned},${user.batch},${user.activestatus}\n`;
       }
     });
     const blob = new Blob([csvContent], { type: "text/csv" });
@@ -245,30 +338,6 @@ function Tables() {
       ...prevData,
       [name]: value,
     }));
-  }
-
-  function handleUpdate() {
-    // Find the index of the row to be updated
-    const rowIndex = dataTable2.findIndex(
-      (row) => row.rollno === rowDataToEdit.rollno
-    );
-    if (rowIndex !== -1) {
-      // Update the row data with edited values
-      const updatedRowData = { ...dataTable2[rowIndex], ...editedData };
-      const updatedDataTable = [...dataTable2];
-      updatedDataTable[rowIndex] = updatedRowData;
-      setDataTable2(updatedDataTable);
-      closeEditModal(); // Close the modal after updating
-    }
-  }
-
-  function handleDelete() {
-    // Filter out the row to be deleted
-    const updatedDataTable = dataTable2.filter(
-      (row) => row.rollno !== rowDataToEdit.rollno
-    );
-    setDataTable2(updatedDataTable);
-    closeDeleteModal(); // Close the modal after deletion
   }
 
   return (
@@ -340,7 +409,7 @@ function Tables() {
                   <span className="text-sm">{user.email}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{user.credits}</span>
+                  <span className="text-sm">{user.creditsearned}</span>
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">{user.department}</span>
@@ -349,11 +418,15 @@ function Tables() {
                   <span className="text-sm">{user.batch}</span>
                 </TableCell>
                 <TableCell>
-                  <Badge type={user.status}>{user.activestatus}</Badge>
+                  {user.status === 1 ? (
+                    <Badge type="success">Active</Badge>
+                  ) : (
+                    <Badge type="danger">Not Active</Badge>
+                  )}
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-4">
-                  <Button
+                    <Button
                       layout="link"
                       size="icon"
                       aria-label="View"
@@ -377,7 +450,6 @@ function Tables() {
                     >
                       <TrashIcon className="w-5 h-5" aria-hidden="true" />
                     </Button>
-                    
                   </div>
                 </TableCell>
               </TableRow>
@@ -466,7 +538,7 @@ function Tables() {
           </div>
         </ModalFooter>
       </Modal>
-      
+
       <Modal isOpen={isDeleteModalOpen} onClose={closeDeleteModal}>
         <ModalHeader>Student Deletion</ModalHeader>
         <ModalBody>Your Deleting student Data</ModalBody>
@@ -497,36 +569,36 @@ function Tables() {
         </ModalFooter>
       </Modal>
 
-
       <Modal isOpen={isViewModalOpen} onClose={closeViewModal}>
         <ModalHeader>Student Course Details</ModalHeader>
         <ModalBody>
           {courseDetails && (
             <div>
               <div className="flex justify-start">
-              <Label className="mr-2">
-                    <span className="font-semibold">Roll No:</span>
-                  </Label>
-                  <p>{courseDetails.rollno}</p>
+                <Label className="mr-2">
+                  <span className="font-semibold">Roll No:</span>
+                </Label>
+                <p>{courseDetails.rollno}</p>
               </div>
               <div className="flex justify-start">
-              <Label className="mr-2">
-                    <span className="font-semibold">Course Name 1:</span>
-                  </Label>
-                  <p>{courseDetails.coursename1}</p>
+                <Label className="mr-2">
+                  <span className="font-semibold">Course Name 1:</span>
+                </Label>
+                <p>{courseDetails.coursename1}</p>
               </div>
               <div className="flex justify-start">
-              <Label className="mr-2">
-                    <span className="font-semibold">Course Name 2:</span>
-                  </Label>
-                  <p>{courseDetails.coursename2}</p>
+                <Label className="mr-2">
+                  <span className="font-semibold">Course Name 2:</span>
+                </Label>
+                <p>{courseDetails.coursename2}</p>
               </div>
               <div className="flex justify-start">
-              <Label className="mr-2">
-                    <span className="font-semibold">Credits Earned:</span>
-                  </Label>
-                  <p>{courseDetails.creditsearned}</p>
+                <Label className="mr-2">
+                  <span className="font-semibold">Course Name 3:</span>
+                </Label>
+                <p>{courseDetails.coursename3}</p>
               </div>
+              
             </div>
           )}
         </ModalBody>
@@ -534,7 +606,6 @@ function Tables() {
           <Button onClick={closeViewModal}>Close</Button>
         </ModalFooter>
       </Modal>
-    
     </>
   );
 }

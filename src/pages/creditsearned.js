@@ -19,62 +19,7 @@ import * as XLSX from "xlsx";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "@windmill/react-ui";
 import { IoIosAddCircleOutline } from "react-icons/io";
 
-const response2 = [
-  {
-    rollno: "776211CS239",
-    name: "Poovarasan",
-    department: "Computer Science And Engineering",
-    currentsemester: "6",
-    coursecompletedsem: "4",
-    course_id: "18XX021",
-    course_name: "Node Js",
-    creditseligible:"3",
 
-  },
-  {
-    rollno: "776211CS248",
-    name: "Praveen",
-    department: "Computer Science And Engineering",
-    currentsemester: "6",
-    coursecompletedsem: "3",
-    course_id: "18XX021",
-    course_name: "Node Js",
-    creditseligible:"3",
-
-  },
-  {
-    rollno: "776212AD145",
-    name: "Ajay S",
-    department: "Artifical Intelligence",
-    currentsemester: "6",
-    coursecompletedsem: "4",
-    course_id: "18XX141",
-    course_name: "Amzaon Cloud Architecture",
-    creditseligible:"3",
-  },
-  {
-    rollno: "776212AD198",
-    name: "OruttuMilaa",
-    department: "Artifical Intelligence",
-    currentsemester: "6",
-    coursecompletedsem: "4",
-    course_id: "18XX021",
-    course_name: "Node Js",
-    creditseligible:"3",
-
-  },
-  {
-    rollno: "776221CS145",
-    name: "Prakash P",
-    department: "Computer Science And Engineering",
-    currentsemester: "5",
-    coursecompletedsem: "4",
-    course_id: "18XX021",
-    course_name: "Node Js",
-    creditseligible:"3",
-
-  },
-];
 
 function Creditearned() {
   const [dataTable2, setDataTable2] = useState([]);
@@ -88,20 +33,19 @@ function Creditearned() {
   const [formData, setFormData] = useState({
     rollno: "",
     name: "",
-    currentsemester: "",
-    coursecompletedsem: "",
-    course_id: "",
-    course_name: "",
     department: "",
-    creditseligible:""
+    currentsemester: "",
+    completedsemester: "",
+    courseid: "",
+    coursename: "",
   });
   const resultsPerPage = 8;
-  const totalResults = response2.length;
+  const totalResults = dataTable2.length;
 
   const [pageTable2, setPageTable2] = useState(1);
   useEffect(() => {
     setDataTable2(
-      response2.slice(
+      dataTable2.slice(
         (pageTable2 - 1) * resultsPerPage,
         pageTable2 * resultsPerPage
       )
@@ -185,14 +129,16 @@ function Creditearned() {
             user.coursecompletedsem
               .toLowerCase()
               .includes(searchTerm.toLowerCase())) ||
-          (user.course_id &&
-            user.course_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.course_name &&
-            user.course_name
+          (user.courseid &&
+            user.courseid.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.coursename &&
+            user.coursename
               .toLowerCase()
               .includes(searchTerm.toLowerCase())) ||
           (user.creditseligible &&
-            user.creditseligible.toLowerCase().includes(searchTerm.toLowerCase()))
+            user.creditseligible
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()))
       )
     );
   }, [searchTerm, dataTable2]);
@@ -204,10 +150,68 @@ function Creditearned() {
       [name]: value,
     }));
   }
-  const handleformsubmit = () => {
-    console.log("Form Data:", formData);
-    closeAddcours();
+  const handleformsubmit = async () => {
+    console.log(formData)
+    try {
+      const response = await fetch("http://localhost:5555/addoneCourse", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        console.log("Form Data sent successfully");
+        closeAddcours();
+      } else {
+        console.error("Failed to send form data");
+      }
+    } catch (error) {
+      console.error("Error sending form data:", error);
+    }
   };
+
+//update course
+  function handleUpdate() {
+    // Find the index of the row to be updated
+    const rowIndex = dataTable2.findIndex(
+      (row) => row.rollno === rowDataToEdit.rollno
+    );
+    if (rowIndex !== -1) {
+      // Update the row data with edited values
+      const updatedRowData = { ...dataTable2[rowIndex], ...editedData };
+      const updatedDataTable = [...dataTable2];
+      updatedDataTable[rowIndex] = updatedRowData;
+      setDataTable2(updatedDataTable);
+      closeEditModal(); // Close the modal after updating
+      updateDataInBackend(updatedRowData);
+    }
+  }
+
+  async function updateDataInBackend(updatedRowData) {
+    try {
+      const response = await fetch(
+        `http://localhost:5555/updatecoursedetails/${updatedRowData.rollno}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedRowData),
+        }
+      );
+      if (response.ok) {
+        console.log("Data updated successfully");
+      } else {
+        console.error("Failed to update data");
+      }
+    } catch (error) {
+      console.error("Error updating data:", error);
+    }
+  }
+
+
+
   function parseExcelData(excelData) {
     const workbook = XLSX.read(excelData, { type: "binary" });
     const sheetName = workbook.SheetNames[0]; // Assuming there's only one sheet
@@ -258,11 +262,11 @@ function Creditearned() {
         user.department &&
         user.currentsemester &&
         user.coursecompletedsem &&
-        user.course_id &&
-        user.course_name &&
+        user.courseid &&
+        user.coursename &&
         user.creditseligible
       ) {
-        csvContent += `${user.rollno},${user.name},${user.department},${user.currentsemester},${user.coursecompletedsem},${user.course_id},${user.course_name},${user.creditseligible}\n`;
+        csvContent += `${user.rollno},${user.name},${user.department},${user.currentsemester},${user.coursecompletedsem},${user.courseid},${user.coursename},${user.creditseligible}\n`;
       }
     });
     const blob = new Blob([csvContent], { type: "text/csv" });
@@ -281,22 +285,33 @@ function Creditearned() {
       [name]: value,
     }));
   }
-  function handleUpdate() {
-    // Find the index of the row to be updated
-    const rowIndex = dataTable2.findIndex(
-      (row) => row.rollno === rowDataToEdit.rollno
-    );
-    if (rowIndex !== -1) {
-      // Update the row data with edited values
-      const updatedRowData = { ...dataTable2[rowIndex], ...editedData };
-      const updatedDataTable = [...dataTable2];
-      updatedDataTable[rowIndex] = updatedRowData;
-      setDataTable2(updatedDataTable);
-      closeEditModal(); // Close the modal after updating
-    }
-  }
+
   function addcourseModal() {
     setAddcourseModalOpen(true);
+  }
+
+  useEffect(() => {
+    fetchOverallStudentData();
+  }, []);
+
+  async function fetchOverallStudentData() {
+    try {
+      const response = await fetch("http://localhost:5555/getOneCreditdetails");
+      const data = await response.json();
+      const mappedData = data.map((student) => ({
+        rollno: student.rollno,
+        name: student.name,
+        email: student.email,
+        department: student.department,
+        currentsemester: student.currentsemester,
+        completedsemester: student.completedsemester,
+        courseid: student.courseid,
+        coursename: student.coursename,
+      }));
+      setDataTable2(mappedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }
 
   return (
@@ -381,17 +396,17 @@ function Creditearned() {
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">
-                    Semester {user.coursecompletedsem}
+                    Semester {user.completedsemester}
                   </span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{user.course_id}</span>
+                  <span className="text-sm">{user.courseid}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{user.course_name}</span>
+                  <span className="text-sm">{user.coursename}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{user.creditseligible}</span>
+                  <span className="text-sm">1</span>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-4">
@@ -403,14 +418,6 @@ function Creditearned() {
                     >
                       <EditIcon className="w-5 h-5" aria-hidden="true" />
                     </Button>
-                    {/* <Button
-                      layout="link"
-                      size="icon"
-                      aria-label="Delete"
-                      onClick={openDeleteModal}
-                    >
-                      <TrashIcon className="w-5 h-5" aria-hidden="true" />
-                    </Button> */}
                   </div>
                 </TableCell>
               </TableRow>
@@ -432,15 +439,15 @@ function Creditearned() {
         <ModalBody className="overflow-y-auto max-h-22">
           {rowDataToEdit && (
             <>
-              <p>Course ID : {rowDataToEdit.course_id}</p>
+              <p>Course ID : {rowDataToEdit.courseid}</p>
 
               <Label className="mt-4">
                 <span>Course ID</span>
                 <Input
                   className="mt-1"
                   name="courseid"
-                  placeholder="XML Web Services"
-                  value={editedData.course_id || ""}
+                  placeholder="18Ad12"
+                  value={editedData.courseid || ""}
                   onChange={handleInputChange}
                 />
               </Label>
@@ -450,7 +457,7 @@ function Creditearned() {
                   className="mt-1"
                   name="coursename"
                   placeholder="Modern Cryptography"
-                  value={editedData.course_name || ""}
+                  value={editedData.coursename || ""}
                   onChange={handleInputChange}
                 />
               </Label>
@@ -536,23 +543,23 @@ function Creditearned() {
         <ModalHeader>Add Course Details</ModalHeader>
         <ModalBody>
           <>
-            <Label className="mt-4">
-              <span>Course ID</span>
+          <Label className="mt-4">
+              <span>Roll no</span>
               <Input
-                name="course_id"
+                name="rollno"
                 className="mt-1"
                 placeholder="18CS023"
-                value={formData.course_id}
+                value={formData.rollno}
                 onChange={handleInputAddChange}
               />
             </Label>
             <Label className="mt-4">
-              <span>Course Name</span>
+              <span>Name</span>
               <Input
-                name="course_name"
+                name="name"
                 className="mt-1"
-                placeholder="Node Ja"
-                value={formData.course_name}
+                placeholder="Sharmilaa G C"
+                value={formData.name}
                 onChange={handleInputAddChange}
               />
             </Label>
@@ -561,18 +568,48 @@ function Creditearned() {
               <Input
                 name="department"
                 className="mt-1"
-                placeholder="Computer Science And Engineering"
+                placeholder="AIDS"
                 value={formData.department}
                 onChange={handleInputAddChange}
               />
             </Label>
             <Label className="mt-4">
-              <span>Semester</span>
+              <span>Current Semester</span>
               <Input
-                name="semester"
+                name="currentsemester"
                 className="mt-1"
-                placeholder="6"
-                value={formData.semester}
+                placeholder="Semester 6"
+                value={formData.currentsemester}
+                onChange={handleInputAddChange}
+              />
+            </Label>
+            <Label className="mt-4">
+              <span>Completed Semester</span>
+              <Input
+                name="completedsemester"
+                className="mt-1"
+                placeholder="Computer Science And Engineering"
+                value={formData.completedsemester}
+                onChange={handleInputAddChange}
+              />
+            </Label>
+            <Label className="mt-4">
+              <span>Course Id</span>
+              <Input
+                name="courseid"
+                className="mt-1"
+                placeholder="18AD12"
+                value={formData.courseid}
+                onChange={handleInputAddChange}
+              />
+            </Label>
+            <Label className="mt-4">
+              <span>Course Name</span>
+              <Input
+                name="coursename"
+                className="mt-1"
+                placeholder="Node JS"
+                value={formData.coursename}
                 onChange={handleInputAddChange}
               />
             </Label>{" "}

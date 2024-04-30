@@ -1,10 +1,6 @@
 import React from "react";
 import { Link, useHistory } from "react-router-dom";
-import ImageLight from "../assets/img/login-office.jpeg";
-import ImageDark from "../assets/img/login-office-dark.jpeg";
-import { GithubIcon, TwitterIcon } from "../icons";
 import { Label, Input, Button } from "@windmill/react-ui";
-import { FcGoogle } from "react-icons/fc";
 import { GoogleLogin } from "react-google-login";
 import { gapi } from "gapi-script";
 import { useState, useEffect } from "react";
@@ -12,8 +8,8 @@ import LoginImage from "../assets/image.png";
 
 function Login() {
   const clientId =
-    "761501369349-o70hbrrm16jvbm924h9vk40r7k127bq2.apps.googleusercontent.com";
-  const history = useHistory(); // Initialize useHistory hook
+    "329607877296-qvr7df27pu766m1qjuvp6hdlcv6j3gf1.apps.googleusercontent.com";
+  const history = useHistory(); 
   useEffect(() => {
     function start() {
       gapi.client.init({
@@ -26,7 +22,27 @@ function Login() {
 
   const onSuccess = async (res) => {
     console.log("LOGIN SUCCESS!", res.profileObj.email);
-    history.push("/app");
+    try {
+      const response = await fetch(
+        `http://localhost:5555/getstudentdetails/${res.profileObj.email}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch user details");
+      }
+      const userData = await response.json();
+      const { name, email, rollno, department, role, semester } =
+        userData;
+
+      sessionStorage.setItem("name", name);
+      sessionStorage.setItem("email", email);
+      sessionStorage.setItem("rollno", rollno);
+      sessionStorage.setItem("department", department);
+      sessionStorage.setItem("role", role.toString());
+      sessionStorage.setItem("semester", semester);
+      history.push("/app");
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
   };
 
   const onFailure = (res) => {

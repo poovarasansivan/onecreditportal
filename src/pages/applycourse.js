@@ -33,13 +33,27 @@ const Semester = [
 ];
 
 function ApplyForms() {
-  const [academicYear, setAcademicYear] = useState("");
+  const rollno = sessionStorage.getItem("rollno");
+  const name = sessionStorage.getItem("name");
   const [semester, setSemester] = useState("");
   const [department, setDepartment] = useState("");
+  const [coursename1, setCourseName1] = useState("");
+  const [coursename2, setCourseName2] = useState("");
+  const [coursename3, setCourseName3] = useState("");
   const [file, setFile] = useState(null);
 
   const handleAcademicSemesterChange = (e) => {
     setSemester(e.target.value);
+  };
+
+  const handleCourseName1Change = (e) => {
+    setCourseName1(e.target.value);
+  };
+  const handleCourseName2Change = (e) => {
+    setCourseName2(e.target.value);
+  };
+  const handleCourseName3Change = (e) => {
+    setCourseName3(e.target.value);
   };
 
   const handleDepartmentChange = (e) => {
@@ -52,34 +66,56 @@ function ApplyForms() {
     setFile(uploadedFile);
   };
 
-  const handleSubmit = () => {
-    console.log("Academic Year:", academicYear);
-    console.log("Semester:", semester);
-    console.log("Department:", department);
+  const handleSubmit = async () => {
+    // Create FormData object
+    const formData = new FormData();
+    formData.append("rollno", rollno);
+    formData.append("name", name);
+    formData.append("department", department);
+    formData.append("semester", semester);
+    formData.append("coursename1", coursename1);
+    formData.append("coursename2", coursename2);
+    formData.append("coursename3", coursename3);
     if (file) {
-      console.log("File:", file); // Log the uploaded file
+      formData.append("file", file);
+    }
+  
+    try {
+      const response = await fetch("http://localhost:5555/addcourse", {
+        method: "POST",
+        body: formData,
+      });
+      if (response.ok) {
+        // Handle success
+        console.log("Form data submitted successfully!");
+        setDepartment("");
+        setFile("");
+        setSemester("");
+        setCourseName1("");
+        setCourseName2("");
+        setCourseName3("");
+      } else {
+        // Handle error
+        console.error("Failed to submit form data");
+      }
+    } catch (error) {
+      // Handle error
+      console.error("Error:", error);
     }
   };
+  
 
   return (
     <>
       <PageTitle>Apply Course Exemption</PageTitle>
       <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-        <Label>
-          <span>Roll No</span>
-          <Input className="mt-1" placeholder="7376211CS239" />
-        </Label>
-        <Label className="mt-4">
-          <span>Name</span>
-          <Input className="mt-1" placeholder="Poovarasan" />
-        </Label>
         <div className="mt-4">
           <Label>Semester</Label>
           <div className="mt-2">
             <Select
               className="mt-1"
-              onChange={handleDepartmentChange}
-              value={department}
+              onChange={handleAcademicSemesterChange}
+              value={semester}
             >
               <option value="">Select Semester</option>
               {Semester.map((Semester, index) => (
@@ -108,7 +144,33 @@ function ApplyForms() {
             </Select>
           </div>
         </div>
-
+        <Label className="mt-4">
+          <span>Course Name 1</span>
+          <Input
+            className="mt-1"
+            placeholder="XML Web Services"
+            value={coursename1}
+            onChange={handleCourseName1Change}
+          />
+        </Label>
+        <Label className="mt-4">
+          <span>Course Name 2</span>
+          <Input
+            className="mt-1"
+            placeholder="Web Technology"
+            value={coursename2}
+            onChange={handleCourseName2Change}
+          />
+        </Label>
+        <Label className="mt-4">
+          <span>Course Name 3</span>
+          <Input
+            className="mt-1"
+            placeholder="Node JS"
+            value={coursename3}
+            onChange={handleCourseName3Change}
+          />
+        </Label>
         {/* File Upload Field */}
         <div className="mt-4">
           <Label className="mt-4">

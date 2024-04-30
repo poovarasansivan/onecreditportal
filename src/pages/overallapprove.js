@@ -20,53 +20,6 @@ import * as XLSX from "xlsx";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "@windmill/react-ui";
 import { Label } from "@windmill/react-ui";
 
-const response2 = [
-  {
-    rollno: "7376211CS239",
-    name: "Murshitha K",
-    department: "CSE",
-    semester: "Semester 6",
-    coursename: "XML And Web Services",
-    completedsem: "Semester 4",
-    proof: "7376211CS239.pdf",
-    approvestatus: 1,
-    eligiblestatus: 1,
-  },
-  {
-    rollno: "7376212AD239",
-    name: "Sharmilaa G C",
-    department: "AIDS",
-    semester: "Semester 6",
-    coursename: "XML And Web Services",
-    completedsem: "Semester 4",
-    proof: "7376212AD239.pdf",
-    approvestatus: 2,
-    eligiblestatus: 2,
-  },
-  {
-    rollno: "7376211CS245",
-    name: "Pooja P",
-    department: "CSE",
-    semester: "Semester 6",
-    coursename: "XML And Web Services",
-    completedsem: "Semester 4",
-    proof: "7376211CS239.pdf",
-    approvestatus: 3,
-    eligiblestatus: 1,
-  },
-  {
-    rollno: "7376212AD177",
-    name: "RatKavi S",
-    department: "AIDS",
-    semester: "Semester 6",
-    coursename: "XML And Web Services",
-    completedsem: "Semester 4",
-    proof: "7376212AD177.pdf",
-    approvestatus: 2,
-    eligiblestatus: 1,
-  },
-];
-
 function ApproveCertifications() {
   const [dataTable2, setDataTable2] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -74,14 +27,20 @@ function ApproveCertifications() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [rowDataToEdit, setRowDataToEdit] = useState(null);
   const [editedData, setEditedData] = useState({});
+  const [userRole, setUserRole] = useState(""); // Assuming user role is stored as a state
+
+  useEffect(() => {
+    const role = sessionStorage.getItem("role");
+    setUserRole(role);
+  }, []);
 
   const resultsPerPage = 8;
-  const totalResults = response.length;
+  const totalResults = dataTable2.length;
 
   const [pageTable2, setPageTable2] = useState(1);
   useEffect(() => {
     setDataTable2(
-      response2.slice(
+      dataTable2.slice(
         (pageTable2 - 1) * resultsPerPage,
         pageTable2 * resultsPerPage
       )
@@ -97,6 +56,36 @@ function ApproveCertifications() {
     setIsEditModalOpen(false);
   }
 
+  const showpdf = (file) => {
+    window.open(`http://localhost:5555/${file}`);
+  };
+
+  useEffect(() => {
+    fetchOverallregisteredcourseData();
+  }, []);
+
+  async function fetchOverallregisteredcourseData() {
+    try {
+      const response = await fetch("http://localhost:5555/getcourse");
+      const data = await response.json();
+      const mappedData = data.map((student) => ({
+        rollno: student.rollno,
+        name: student.name,
+        department: student.department,
+        semester: student.semester,
+        coursename1: student.coursename1,
+        coursename2: student.coursename2,
+        coursename3: student.coursename3,
+        file: student.file,
+        approvalstatus: student.approvalstatus,
+        eligiblitystatus: student.eligiblitystatus,
+      }));
+      setDataTable2(mappedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
   useEffect(() => {
     setFilteredData(
       dataTable2.filter(
@@ -109,12 +98,20 @@ function ApproveCertifications() {
             user.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.semester &&
             user.semester.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.coursename &&
-            user.coursename.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.completedsem &&
-            user.completedsem
+          (user.coursename1 &&
+            user.coursename1
               .toLowerCase()
               .includes(searchTerm.toLowerCase())) ||
+          (user.coursename2 &&
+            user.coursename2
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (user.coursename3 &&
+            user.coursename3
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (user.semester &&
+            user.semester.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.proof &&
             user.proof.toLowerCase().includes(searchTerm.toLowerCase()))
       )
@@ -174,12 +171,20 @@ function ApproveCertifications() {
             user.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.semester &&
             user.semester.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.coursename &&
-            user.coursename.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (user.completedsem &&
-            user.completedsem
+          (user.coursename1 &&
+            user.coursename1
               .toLowerCase()
               .includes(searchTerm.toLowerCase())) ||
+          (user.coursename2 &&
+            user.coursename2
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (user.coursename3 &&
+            user.coursename3
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())) ||
+          (user.semester &&
+            user.semester.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (user.proof &&
             user.proof.toLowerCase().includes(searchTerm.toLowerCase()))
       )
@@ -219,14 +224,16 @@ function ApproveCertifications() {
 
   function handleExportData() {
     let csvContent =
-      "Roll no,Name,Department,CourseName,Proof,Completed Semester,Status\n";
+      "Roll no,Name,Department,CourseName 1,CourseName 2,CourseName 3,Proof,Completed Semester,Status\n";
     dataTable2.forEach((user) => {
       csvContent += `${user.rollno},${user.name},${user.department},${
-        user.coursename
-      },${user.proof},${user.completedsem},${
-        user.approvestatus === 1
+        user.coursename1
+      },${user.coursename2},${user.coursename3},${user.proof},${
+        user.semester
+      },${
+        user.approvalstatus === 1
           ? "Pending"
-          : user.approvestatus === 2
+          : user.approvalstatus === 2
           ? "Approved"
           : "Rejected"
       }\n`;
@@ -248,19 +255,68 @@ function ApproveCertifications() {
     }));
   }
 
-  function handleUpdate() {
-    const rowIndex = dataTable2.findIndex(
-      (row) => row.rollno === rowDataToEdit.rollno
-    );
-    if (rowIndex !== -1) {
-      const updatedRowData = { ...dataTable2[rowIndex], ...editedData };
-      const updatedDataTable = [...dataTable2];
-      updatedDataTable[rowIndex] = updatedRowData;
-      setDataTable2(updatedDataTable);
-      closeEditModal();
+  function handleapprovalstatus(rollno) {
+    if (rowDataToEdit) {
+      const updatedData = {
+        ...rowDataToEdit,
+        approvalstatus: '2',
+        eligiblitystatus: '2',
+      };
+  
+      fetch(`http://localhost:5555/updatestatus/${rollno}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Updated data:", data);
+          setDataTable2((prevData) =>
+            prevData.map((item) =>
+              item.rollno === updatedData.rollno ? updatedData : item
+            )
+          );
+        })
+        .catch((error) => {
+          console.error("Error updating data:", error);
+        });
     }
+    closeEditModal();
   }
-
+ 
+  function handleapprovalrejectstatus(rollno) {
+    if (rowDataToEdit) {
+      const updatedData = {
+        ...rowDataToEdit,
+        approvalstatus: '3',
+        eligiblitystatus: '1',
+      };
+  
+      fetch(`http://localhost:5555/updatestatus/${rollno}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Updated data:", data);
+          setDataTable2((prevData) =>
+            prevData.map((item) =>
+              item.rollno === updatedData.rollno ? updatedData : item
+            )
+          );
+        })
+        .catch((error) => {
+          console.error("Error updating data:", error);
+        });
+    }
+    closeEditModal();
+  }
+ 
   return (
     <>
       <PageTitle>One Credits Request Master</PageTitle>
@@ -297,21 +353,22 @@ function ApproveCertifications() {
               <TableCell>S no</TableCell>
               <TableCell>Roll no</TableCell>
               <TableCell>Name</TableCell>
-              <TableCell>Semester</TableCell>
+
               <TableCell>Department</TableCell>
-              <TableCell>Course Name</TableCell>
+              <TableCell>Course Name 1</TableCell>
+              <TableCell>Course Name 2</TableCell>
+              <TableCell>Course Name 3</TableCell>
               <TableCell>Completed Semester</TableCell>
               <TableCell>Proof</TableCell>
               <TableCell>Approval Status</TableCell>
               <TableCell>Eligibility Status</TableCell>
-              <TableCell>Actions</TableCell>
+              {userRole === "1" && <TableCell>Actions</TableCell>}
             </tr>
           </TableHeader>
           <TableBody>
             {filteredData.map((user, i) => (
               <TableRow key={i}>
                 <TableCell>
-                  {" "}
                   <span className="text-sm">
                     {(pageTable2 - 1) * resultsPerPage + i + 1}
                   </span>
@@ -326,57 +383,63 @@ function ApproveCertifications() {
                 <TableCell>
                   <span className="text-sm">{user.name}</span>
                 </TableCell>
-                <TableCell>
-                  <span className="text-sm">{user.semester}</span>
-                </TableCell>
+
                 <TableCell>
                   <span className="text-sm">{user.department}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{user.coursename}</span>
+                  <span className="text-sm">{user.coursename1}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{user.completedsem}</span>
+                  <span className="text-sm">{user.coursename2}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{user.proof}</span>
+                  <span className="text-sm">{user.coursename3}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.semester}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.file}</span>
                 </TableCell>
                 <TableCell>
                   <Badge
                     type={
-                      user.approvestatus === 1
+                      user.approvalstatus === '1'
                         ? "warning"
-                        : user.approvestatus === 2
+                        : user.approvalstatus === '2'
                         ? "success"
                         : "danger"
                     }
                   >
-                    {user.approvestatus === 1
+                    {user.approvalstatus === '1'
                       ? "Pending"
-                      : user.approvestatus === 2
+                      : user.approvalstatus === '2'
                       ? "Approved"
                       : "Rejected"}
                   </Badge>
                 </TableCell>
                 <TableCell>
                   <Badge
-                    type={user.approvestatus === 1 ? "warning" : "success"}
+                    type={user.eligiblitystatus === '1' ? "warning" : "success"}
                   >
-                    {user.approvestatus === 1 ? "Not Eligible" : "Eligible"}
+                    {user.eligiblitystatus === '1' ? "Not Eligible" : "Eligible"}
                   </Badge>
                 </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-4">
-                    <Button
-                      layout="link"
-                      size="icon"
-                      aria-label="Edit"
-                      onClick={() => openEditModal(user)}
-                    >
-                      <EditIcon className="w-5 h-5" aria-hidden="true" />
-                    </Button>
-                  </div>
-                </TableCell>
+                {userRole === "1" && (
+                  <TableCell>
+                    <div className="flex items-center space-x-4">
+                      <Button
+                        layout="link"
+                        size="icon"
+                        aria-label="Edit"
+                        onClick={() => openEditModal(user)}
+                      >
+                        <EditIcon className="w-5 h-5" aria-hidden="true" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
@@ -390,7 +453,6 @@ function ApproveCertifications() {
           />
         </TableFooter>
       </TableContainer>
-      <div></div>
       <Modal isOpen={isEditModalOpen} onClose={closeEditModal}>
         <ModalHeader>Course Details</ModalHeader>
         <ModalBody>
@@ -418,34 +480,56 @@ function ApproveCertifications() {
                 </div>
                 <div className="flex justify-start mb-2">
                   <Label className="mr-2">
-                    <span className="font-semibold">Course Name:</span>
+                    <span className="font-semibold">Course Name 1:</span>
                   </Label>
-                  <p>{rowDataToEdit.coursename}</p>
+                  <p>{rowDataToEdit.coursename1}</p>
+                </div>
+                <div className="flex justify-start mb-2">
+                  <Label className="mr-2">
+                    <span className="font-semibold">Course Name 2:</span>
+                  </Label>
+                  <p>{rowDataToEdit.coursename2}</p>
+                </div>
+                <div className="flex justify-start mb-2">
+                  <Label className="mr-2">
+                    <span className="font-semibold">Course Name 3:</span>
+                  </Label>
+                  <p>{rowDataToEdit.coursename3}</p>
                 </div>
                 <div className="flex justify-start mb-2">
                   <Label className="mr-2">
                     <span className="font-semibold">Completed Semester:</span>
                   </Label>
-                  <p>{rowDataToEdit.completedsem}</p>
+                  <p>{rowDataToEdit.semester}</p>
                 </div>
-                <div className="flex justify-start">
+                <div className="flex justify-start mb-2">
                   <Label className="mr-2">
                     <span className="font-semibold">Proof:</span>
                   </Label>
-                  <p>{rowDataToEdit.proof}</p>
+                  <div className="flex items-center">
+                    <Button
+                      onClick={() => showpdf(rowDataToEdit.file)}
+                      size="small"
+                    >
+                      Show Proof
+                    </Button>
+                  </div>
                 </div>
               </div>
             </>
           )}
         </ModalBody>
         <ModalFooter>
-          <div className="hidden sm:block">
-            <Button onClick={handleUpdate}>Approve</Button>
-          </div>
-          <div className="hidden sm:block">
-            <Button onClick={handleUpdate}>Reject</Button>
-          </div>
-
+          {userRole === "1" && (
+            <>
+              <div className="hidden sm:block">
+                <Button onClick={() => handleapprovalstatus(rowDataToEdit.rollno)}>Approve</Button>
+              </div>
+              <div className="hidden sm:block">
+                <Button onClick={() => handleapprovalrejectstatus(rowDataToEdit.rollno)}>Reject</Button>
+              </div>
+            </>
+          )}
           <div className="hidden sm:block">
             <Button layout="outline" onClick={closeEditModal}>
               Cancel
@@ -462,11 +546,13 @@ function ApproveCertifications() {
               Cancel
             </Button>
           </div>
-          <div className="block w-full sm:hidden">
-            <Button block size="large" onClick={handleUpdate}>
-              Update
-            </Button>
-          </div>
+          {userRole === "1" && (
+            <div className="block w-full sm:hidden">
+              <Button block size="large" onClick={handleapprovalstatus}>
+                Update
+              </Button>
+            </div>
+          )}
         </ModalFooter>
       </Modal>
     </>

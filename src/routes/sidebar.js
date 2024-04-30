@@ -19,11 +19,11 @@ switch (role) {
         icon: "GiReceiveMoney",
         name: "Credits Earned",
       },
-      {
-        path: "/app/applycourse",
-        icon: "FormsIcon",
-        name: "Apply Course",
-      },
+      // {
+      //   path: "/app/applycourse",
+      //   icon: "FormsIcon",
+      //   name: "Apply Course",
+      // },
       {
         path: "/app/approvecourse",
         icon: "SiCoursera",

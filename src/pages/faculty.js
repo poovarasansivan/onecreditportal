@@ -491,7 +491,7 @@ function Tables() {
               <Input
                 name="name"
                 className="mt-1"
-                placeholder="Poovarasan"
+                placeholder="Sharmila G C"
                 value={formData.name}
                 onChange={handleInputAddChange}
               />

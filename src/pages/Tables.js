@@ -482,7 +482,7 @@ function Tables() {
                 <Input
                   className="mt-1"
                   name="name"
-                  placeholder="Poovarasan"
+                  placeholder="Sharmilaa G C"
                   value={editedData.name || ""}
                   onChange={handleInputChange}
                 />
@@ -492,7 +492,7 @@ function Tables() {
                 <Input
                   className="mt-1"
                   name="email"
-                  placeholder="poovarasan@bitsathy"
+                  placeholder="sharmilaa.ad21@bitsathy.ac.in"
                   value={editedData.email || ""}
                   onChange={handleInputChange}
                 />
@@ -502,7 +502,7 @@ function Tables() {
                 <Input
                   className="mt-1"
                   name="department"
-                  placeholder="CSE"
+                  placeholder="AIDS"
                   value={editedData.department || ""}
                   onChange={handleInputChange}
                 />

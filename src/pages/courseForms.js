@@ -70,11 +70,11 @@ function Forms() {
       <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
         <Label>
           <span>Roll No</span>
-          <Input className="mt-1" placeholder="7376211CS239" />
+          <Input className="mt-1" placeholder="7376212AD197" />
         </Label>
         <Label className="mt-4">
           <span>Name</span>
-          <Input className="mt-1" placeholder="Poovarasan" />
+          <Input className="mt-1" placeholder="Sharmilaa G C" />
         </Label>
     
           <div className="mt-4">

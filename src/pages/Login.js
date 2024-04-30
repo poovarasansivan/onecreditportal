@@ -78,7 +78,7 @@ function Login() {
                 <Input
                   className="mt-1"
                   type="email"
-                  placeholder="john@doe.com"
+                  placeholder="sharmilaa@gmail.com"
                 />
               </Label>
 

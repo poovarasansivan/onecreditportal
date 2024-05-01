@@ -59,10 +59,18 @@ function ApproveCertifications() {
   const showpdf = (file) => {
     window.open(`http://localhost:5555/${file}`);
   };
+const rollno = sessionStorage.getItem("rollno");
 
-  useEffect(() => {
+
+useEffect(() => {
+  if (userRole === "2") {
+    fetchOvermyregisteredcourseData();
+  } else {
     fetchOverallregisteredcourseData();
-  }, []);
+  }
+}, [userRole]);
+
+
 
   async function fetchOverallregisteredcourseData() {
     try {
@@ -74,8 +82,11 @@ function ApproveCertifications() {
         department: student.department,
         semester: student.semester,
         coursename1: student.coursename1,
+        course1completedsemester:student.course1completedsemester,
         coursename2: student.coursename2,
+        course2completedsemester:student.course2completedsemester,
         coursename3: student.coursename3,
+        course3completedsemester:student.course3completedsemester,
         file: student.file,
         approvalstatus: student.approvalstatus,
         eligiblitystatus: student.eligiblitystatus,
@@ -85,6 +96,36 @@ function ApproveCertifications() {
       console.error("Error fetching data:", error);
     }
   }
+  async function fetchOvermyregisteredcourseData() {
+    try {
+      const response = await fetch(`http://localhost:5555/getmyapprovestatus/${rollno}`);
+      const data = await response.json();
+      // Check if data is an array before mapping
+      if (Array.isArray(data)) {
+        const mappedData = data.map((student) => ({
+          rollno: student.rollno,
+          name: student.name,
+          department: student.department,
+          semester: student.semester,
+          coursename1: student.coursename1,
+          course1completedsemester:student.course1completedsemester,
+          coursename2: student.coursename2,
+          course2completedsemester:student.course2completedsemester,
+          coursename3: student.coursename3,
+          course3completedsemester:student.course3completedsemester,
+          file: student.file,
+          approvalstatus: student.approvalstatus,
+          eligiblitystatus: student.eligiblitystatus,
+        }));
+        setDataTable2(mappedData);
+      } else {
+        console.error("Data received from the server is not in the expected format:", data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+  
 
   useEffect(() => {
     setFilteredData(
@@ -356,9 +397,12 @@ function ApproveCertifications() {
 
               <TableCell>Department</TableCell>
               <TableCell>Course Name 1</TableCell>
+              <TableCell>Course 1 Completed Semester</TableCell>
               <TableCell>Course Name 2</TableCell>
+              <TableCell>Course 2 Completed Semester</TableCell>
               <TableCell>Course Name 3</TableCell>
-              <TableCell>Completed Semester</TableCell>
+              <TableCell>Course 3 Completed Semester</TableCell>
+              <TableCell>Current Semester</TableCell>
               <TableCell>Proof</TableCell>
               <TableCell>Approval Status</TableCell>
               <TableCell>Eligibility Status</TableCell>
@@ -391,10 +435,19 @@ function ApproveCertifications() {
                   <span className="text-sm">{user.coursename1}</span>
                 </TableCell>
                 <TableCell>
+                  <span className="text-sm">{user.course1completedsemester}</span>
+                </TableCell>
+                <TableCell>
                   <span className="text-sm">{user.coursename2}</span>
                 </TableCell>
                 <TableCell>
+                  <span className="text-sm">{user.course2completedsemester}</span>
+                </TableCell>
+                <TableCell>
                   <span className="text-sm">{user.coursename3}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm">{user.course3completedsemester}</span>
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">{user.semester}</span>
@@ -486,9 +539,21 @@ function ApproveCertifications() {
                 </div>
                 <div className="flex justify-start mb-2">
                   <Label className="mr-2">
+                    <span className="font-semibold">Course 1 Completed Semester:</span>
+                  </Label>
+                  <p>{rowDataToEdit.course1completedsemester}</p>
+                </div>
+                <div className="flex justify-start mb-2">
+                  <Label className="mr-2">
                     <span className="font-semibold">Course Name 2:</span>
                   </Label>
                   <p>{rowDataToEdit.coursename2}</p>
+                </div>
+                <div className="flex justify-start mb-2">
+                  <Label className="mr-2">
+                    <span className="font-semibold">Course 2 Completed Semester:</span>
+                  </Label>
+                  <p>{rowDataToEdit.course2completedsemester}</p>
                 </div>
                 <div className="flex justify-start mb-2">
                   <Label className="mr-2">
@@ -498,7 +563,13 @@ function ApproveCertifications() {
                 </div>
                 <div className="flex justify-start mb-2">
                   <Label className="mr-2">
-                    <span className="font-semibold">Completed Semester:</span>
+                    <span className="font-semibold">Course 3 Completed Semester:</span>
+                  </Label>
+                  <p>{rowDataToEdit.course3completedsemester}</p>
+                </div>
+                <div className="flex justify-start mb-2">
+                  <Label className="mr-2">
+                    <span className="font-semibold">Current Semester:</span>
                   </Label>
                   <p>{rowDataToEdit.semester}</p>
                 </div>

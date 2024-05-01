@@ -38,8 +38,12 @@ function ApplyForms() {
   const [semester, setSemester] = useState("");
   const [department, setDepartment] = useState("");
   const [coursename1, setCourseName1] = useState("");
+  const [coursen1completedsemester, setCoursen1completedsemester] = useState("");
   const [coursename2, setCourseName2] = useState("");
+  const [coursen2completedsemester, setCoursen2completedsemester] = useState("");
   const [coursename3, setCourseName3] = useState("");
+  const [coursen3completedsemester, setCoursen3completedsemester] = useState("");
+
   const [file, setFile] = useState(null);
 
   const handleAcademicSemesterChange = (e) => {
@@ -55,7 +59,15 @@ function ApplyForms() {
   const handleCourseName3Change = (e) => {
     setCourseName3(e.target.value);
   };
-
+  const handleCourse1semesterChange = (e) => {
+    setCoursen1completedsemester(e.target.value);
+  };
+  const handleCourse2semesterChange = (e) => {
+    setCoursen2completedsemester(e.target.value);
+  };
+  const handleCourse3semesterChange = (e) => {
+    setCoursen3completedsemester(e.target.value);
+  };
   const handleDepartmentChange = (e) => {
     const selectedDepartment = e.target.value;
     setDepartment(selectedDepartment);
@@ -74,8 +86,11 @@ function ApplyForms() {
     formData.append("department", department);
     formData.append("semester", semester);
     formData.append("coursename1", coursename1);
+    formData.append("course1completedsemester", coursen1completedsemester);
     formData.append("coursename2", coursename2);
+    formData.append("course2completedsemester", coursen2completedsemester);
     formData.append("coursename3", coursename3);
+    formData.append("course3completedsemester", coursen3completedsemester);
     if (file) {
       formData.append("file", file);
     }
@@ -92,8 +107,12 @@ function ApplyForms() {
         setFile("");
         setSemester("");
         setCourseName1("");
+        setCoursen1completedsemester("");
         setCourseName2("");
+        setCoursen2completedsemester("");
         setCourseName3("");
+        setCoursen3completedsemester("");
+        setFile(null);
       } else {
         // Handle error
         console.error("Failed to submit form data");
@@ -154,6 +173,15 @@ function ApplyForms() {
           />
         </Label>
         <Label className="mt-4">
+          <span>Course 1 Completed Semester</span>
+          <Input
+            className="mt-1"
+            placeholder="Semester 6"
+            value={coursen1completedsemester}
+            onChange={handleCourse1semesterChange}
+          />
+        </Label>
+        <Label className="mt-4">
           <span>Course Name 2</span>
           <Input
             className="mt-1"
@@ -163,12 +191,30 @@ function ApplyForms() {
           />
         </Label>
         <Label className="mt-4">
+          <span>Course 2 Completed Semester</span>
+          <Input
+            className="mt-1"
+            placeholder="Semester 5"
+            value={coursen2completedsemester}
+            onChange={handleCourse2semesterChange}
+          />
+        </Label>
+        <Label className="mt-4">
           <span>Course Name 3</span>
           <Input
             className="mt-1"
             placeholder="Node JS"
             value={coursename3}
             onChange={handleCourseName3Change}
+          />
+        </Label>
+        <Label className="mt-4">
+          <span>Course 3 Completed Semester</span>
+          <Input
+            className="mt-1"
+            placeholder="Semester 4"
+            value={coursen3completedsemester}
+            onChange={handleCourse3semesterChange}
           />
         </Label>
         {/* File Upload Field */}

@@ -64,11 +64,11 @@ switch (role) {
           icon: "SiCoursera",
           name: "Completed Course",
         },
-        {
-          path: "/app/creditsearned",
-          icon: "GiReceiveMoney",
-          name: "Credits Earned",
-        },
+        // {
+        //   path: "/app/creditsearned",
+        //   icon: "GiReceiveMoney",
+        //   name: "Credits Earned",
+        // },
       ];
     }
     break;
